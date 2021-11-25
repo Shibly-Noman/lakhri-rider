@@ -12,6 +12,7 @@ import RiderHome from './src/Features/RiderHome';
 import WaitingPage from './src/utils/WaitingPage';
 import TabController from './src/Features/TabController';
 import PaymentDetails from './src/utils/PaymentDetails';
+import RiderDocuments from './src/authentications/RiderDocuments';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -21,9 +22,15 @@ export default function App() {
         <Stack.Screen styles={styles.container} name="introStepper" options={{
           headerShown: false
         }} component={IntroStepper} />
+        
         <Stack.Screen styles={styles.container} name="RiderRegister" options={{
           headerShown: false
         }} component={RiderRegister} />
+
+        <Stack.Screen styles={styles.container} name="RiderDocuments" options={{
+          headerShown: false
+        }} component={RiderDocuments} />
+
         <Stack.Screen styles={styles.container} name="RiderLogin" options={{
           headerShown: false
         }} component={RiderLogin} />
@@ -37,7 +44,7 @@ export default function App() {
           headerShown: false
         }} component={WaitingPage} />
 
-<Stack.Screen styles={styles.container} name="PaymentDetails" options={{
+        <Stack.Screen styles={styles.container} name="PaymentDetails" options={{
           headerShown: false
         }} component={PaymentDetails} />
 

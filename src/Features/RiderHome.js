@@ -251,6 +251,7 @@ function RiderHome({ navigation }) {
                             marginLeft: 30,
                             justifyContent: 'center',
                             alignItems: 'center',
+                            
                         }}>
                             <Text style={{color: '#fff', fontSize: 17}}>
                                     Complete

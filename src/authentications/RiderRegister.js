@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useForm, Controller } from "react-hook-form";
 export default function RiderRegister({ navigation }) {
@@ -30,7 +30,7 @@ export default function RiderRegister({ navigation }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     useEffect(() => {
         if (isAuthenticated) {
-            navigation.navigate('CheckActive');
+            navigation.navigate('RiderDocuments');
         }
     })
     const { control, handleSubmit, formState: { errors } } = useForm();
@@ -67,101 +67,140 @@ export default function RiderRegister({ navigation }) {
 
 
             <View style={styles.container}>
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Name</Text>
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                            />
-                        </View>
-                    )}
-                    name="fullName"
-                    defaultValue=""
-                />
-                {errors.fullName && <Text style={{
-                    color: "#F00"
-                }}>Name is required.</Text>}
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <View style={styles.inputWrapper}>
+                                <Text style={styles.inputLable}>Name</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            </View>
+                        )}
+                        name="fullName"
+                        defaultValue=""
+                    />
+                    {errors.fullName && <Text style={{
+                        color: "#F00"
+                    }}>Name is required.</Text>}
 
 
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Email</Text>
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                            />
-                        </View>
-                    )}
-                    name="email"
-                    defaultValue=""
-                />
-                {errors.email && <Text style={{
-                    color: "#F00"
-                }}>email is required.</Text>}
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <View style={styles.inputWrapper}>
+                                <Text style={styles.inputLable}>Email</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            </View>
+                        )}
+                        name="email"
+                        defaultValue=""
+                    />
+                    {errors.email && <Text style={{
+                        color: "#F00"
+                    }}>email is required.</Text>}
 
 
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Phone Number</Text>
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                            />
-                        </View>
-                    )}
-                    name="phoneNumber"
-                    defaultValue=""
-                />
-                {errors.phoneNumber && <Text style={{
-                    color: "#F00"
-                }}>Phone Number is required.</Text>}
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <View style={styles.inputWrapper}>
+                                <Text style={styles.inputLable}>Phone Number</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            </View>
+                        )}
+                        name="phoneNumber"
+                        defaultValue=""
+                    />
+                    {errors.phoneNumber && <Text style={{
+                        color: "#F00"
+                    }}>Phone Number is required.</Text>}
 
-                <Controller
-                    control={control}
-                    rules={{
-                        maxLength: 100,
-                        required: true,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Password</Text>
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                secureTextEntry={true}
-                            />
-                        </View>
-                    )}
-                    name="password"
-                    defaultValue=""
-                />
-                {errors.password && <Text style={{
-                    color: "#F00"
-                }}>Password is required.</Text>}
+                    <Controller
+                        control={control}
+                        rules={{
+                            maxLength: 100,
+                            required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <View style={styles.inputWrapper}>
+                                <Text style={styles.inputLable}>Password</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                    secureTextEntry={true}
+                                />
+                            </View>
+                        )}
+                        name="password"
+                        defaultValue=""
+                    />
+                    {errors.password && <Text style={{
+                        color: "#F00"
+                    }}>Password is required.</Text>}
+
+
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <View style={styles.inputWrapper}>
+                                <Text style={styles.inputLable}>Address</Text>
+                                <TextInput
+                                    multiline
+                                    numberOfLines={3}
+                                    style={styles.input}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            </View>
+                        )}
+                        name="phoneNumber"
+                        defaultValue=""
+                    />
+                    {errors.phoneNumber && <Text style={{
+                        color: "#F00"
+                    }}>Phone Number is required.</Text>}
+
+
+                    <View style={{
+                        height: 50,
+                    }}>
+
+                    </View>
+
+                </ScrollView>
+
+
+
                 {/* 
                 <View style={styles.inputWrapper}>
                     <Text style={styles.secoundaryColorText}>Forgot Password</Text>
@@ -169,15 +208,15 @@ export default function RiderRegister({ navigation }) {
 
                 {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit(onSubmit)} /> */}
                 <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
-                    <Text style={styles.appButtonText}>Next</Text>
+                    <Text style={styles.appButtonText}>Sumit</Text>
                 </TouchableOpacity>
 
-                <View style={{ display: "flex", flexDirection: "row" }}>
+                {/* <View style={{ display: "flex", flexDirection: "row" }}>
                     <Text>Already have an account? </Text>
                     <Text style={{
                         color: "#02adfb"
                     }}>Log in</Text>
-                </View>
+                </View> */}
 
             </View>
         </ImageBackground>
@@ -192,6 +231,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         minWidth: "100%",
         padding: 24,
+        paddingTop: 40,
+        paddingBottom: 80,
     },
     titleSectionProperties: {
         minWidth: "100%",
@@ -218,7 +259,7 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: '600',
         marginBottom: 10,
-        color: "#FFFFFF",
+        color: "#D3d3d3",
     },
     primarySubTitle: {
         fontSize: 16,
@@ -230,6 +271,8 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     appButtonContainer: {
+        position: 'absolute',
+        bottom: 5,
         elevation: 8,
         backgroundColor: "#02adfb",
         borderRadius: 6,
@@ -237,6 +280,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         marginTop: 20,
         marginBottom: 10,
+        minWidth: "100%",
     },
     appButtonText: {
         fontSize: 14,
