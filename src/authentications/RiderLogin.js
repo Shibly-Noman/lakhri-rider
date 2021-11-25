@@ -2,10 +2,26 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
 import { useForm, Controller } from "react-hook-form";
-export default function RiderLogin() {
+import axios from "axios";
+import * as SecureStore from 'expo-secure-store';
+
+export default function RiderLogin({navigation}) {
     const { control, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = data => {
-        console.log('This is data', data);
+
+    const onSubmit = async ({firstName:email, password}) => {
+
+        try{
+            const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
+            if(data.token){
+                await SecureStore.setItemAsync("token", JSON.stringify(data.token));
+                await SecureStore.setItemAsync("userID", JSON.stringify(data.user._id));
+                navigation.navigate("TabController");
+            }
+
+        }catch(err){
+            console.log(err);
+        }
+        
     }
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
@@ -69,11 +85,11 @@ export default function RiderLogin() {
                 <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
                     <Text style={styles.appButtonText}>Sign In</Text>
                 </TouchableOpacity>
-                <View style={{ display: "flex", flexDirection: "row"}}>
-                <Text>Don't Have an account? </Text>
-                <Text style={{
-                    color: "#02adfb"
-                }}>Create Account</Text>
+                <View style={{ display: "flex", flexDirection: "row" }}>
+                    <Text>Don't Have an account? </Text>
+                    <Text style={{
+                        color: "#02adfb"
+                    }}>Create Account</Text>
                 </View>
             </View>
         </ImageBackground>

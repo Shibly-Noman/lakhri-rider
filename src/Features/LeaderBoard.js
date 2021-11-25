@@ -3,8 +3,25 @@ import * as React from 'react';
 import { View, Text, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native'
 import { Button } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+import * as SecureStore from "expo-secure-store";
 
 function RiderLeadershipBoard() {
+    const [data, setData] = React.useState(null);
+
+    React.useEffect(async ()=>{
+        const token = await SecureStore.getItemAsync("token");
+        try{
+            
+            const {data} = await axios.get("https://peaceful-citadel-48843.herokuapp.com/rider/leader-ship-board", {
+                headers: {"Authorization": "Bearer "+ token}
+            })
+            console.log(data);
+        }
+        catch(err){
+            console.log(err);
+        }
+    }, [])
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
         <View style={{
