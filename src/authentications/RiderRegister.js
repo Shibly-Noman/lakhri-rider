@@ -30,7 +30,7 @@ export default function RiderRegister({ navigation }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     useEffect(() => {
         if (isAuthenticated) {
-            navigation.navigate('CheckActive');
+            navigation.navigate('TabController');
         }
     })
     const { control, handleSubmit, formState: { errors } } = useForm();
