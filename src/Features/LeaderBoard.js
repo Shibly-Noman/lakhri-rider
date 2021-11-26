@@ -136,8 +136,26 @@ function RiderLeadershipBoard() {
                     >
                       {el.rider.name}
                     </Text>
-                    <View
-                      style={{
+
+                </View>
+                
+                <View style={{
+                    padding: 10,
+                    borderRadius: 8,
+                    margin: 0,
+                    borderWidth: 1,
+                    backgroundColor: "#fafafa",
+                    borderColor: "#ddd",
+                    shadowColor: "#000",
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                }}>
+                    <View style={{
                         display: "flex",
                         flexDirection: "row",
                         paddingTop: 5,
@@ -226,8 +244,6 @@ function RiderLeadershipBoard() {
                     </View>
                   </View>
                 </View>
-              </View>
-            ))}
 
           <View
             style={{
