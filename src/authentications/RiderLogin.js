@@ -7,9 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 
 export default function RiderLogin({navigation}) {
     const { control, handleSubmit, formState: { errors } } = useForm();
-
     const onSubmit = async ({firstName:email, password}) => {
-
         try{
             const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
             if(data.token){
@@ -21,7 +19,6 @@ export default function RiderLogin({navigation}) {
         }catch(err){
             console.log(err);
         }
-        
     }
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>

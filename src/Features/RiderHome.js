@@ -4,20 +4,32 @@ import { useState } from 'react';
 import { View, Text, Modal, Image, Pressable, Linking, TouchableOpacity, ImageBackground, TextInput, CheckBox, ScrollView, StyleSheet } from 'react-native'
 import { Card, Avatar, Button } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
 
 
 function RiderHome({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
-    const orders = [{
-        pickStatus: true,
-        activeStatus: true,
-    }, {
-        pickStatus: false,
-        activeStatus: false,
-    }, {
-        pickStatus: false,
-        activeStatus: false,
-    }];
+    const [orders, setOrders] = React.useState([]);
+
+    React.useEffect(async ()=>{
+        let token = await SecureStore.getItemAsync("token");
+        token = JSON.parse(token);
+        let id = await SecureStore.getItemAsync("userID");
+        id = JSON.parse(id);
+        try{
+            const {data} = await axios.get(`https://peaceful-citadel-48843.herokuapp.com/order/rider/all/${id}`, {
+                headers: {"Authorization": "Bearer "+ token}
+            })
+            setOrders(data.Orders);
+        }
+        catch(err){
+            console.log(err);
+        }
+    }, [])
+
+
+    
 
     const triggerCall = (ph) => {
         Linking.openURL(ph);
@@ -297,14 +309,14 @@ function RiderHome({ navigation }) {
                                 }}>
                                     <Text style={{
                                         fontSize: 24
-                                    }}>Jennifer Lawrence</Text>
-                                    <Text style={{ color: '#FF4848' }}>350.00 BDT</Text>
+                                    }}>{order.userId.name}</Text>
+                                    {/* <Text style={{ color: '#FF4848' }}>350.00 BDT</Text> */}
                                 </View>
                                 <View style={{
                                     width: '18%'
                                 }} >
                                     <Image
-                                        source={require('../../assets/images/profile.jpeg')}
+                                        source={{ uri: `${order.userId.imgURL}` }}
                                         style={{
                                             height: 50,
                                             width: 50,
@@ -323,9 +335,9 @@ function RiderHome({ navigation }) {
                                 <Text style={{
                                     marginTop: 15
                                 }}>Number of Item</Text>
-                                <Text style={{ marginTop: 15 }}>3</Text>
+                                <Text style={{ marginTop: 15 }}>{order.productInfo.length}</Text>
                             </View>
-                            <View style={{
+                            {/* <View style={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
@@ -334,7 +346,7 @@ function RiderHome({ navigation }) {
                                     marginTop: 10
                                 }}>Pickup Destination</Text>
                                 <Text style={{ marginTop: 15 }}>2</Text>
-                            </View>
+                            </View> */}
                             <View style={{
                                 display: 'flex',
                                 flexDirection: 'row',
@@ -344,7 +356,7 @@ function RiderHome({ navigation }) {
 
                                     marginTop: 5
                                 }}>Delivery Location</Text>
-                                <Text style={{ marginTop: 15 }}>Inside Dhaka</Text>
+                                <Text style={{ marginTop: 5 }}>asdfasdfasdfawdf adf asdfa dfasdfa d fa dfasdfa sdfasdfg wgfsfdg rfgsfd sdf</Text>
 
                             </View>
                             <View style={{
