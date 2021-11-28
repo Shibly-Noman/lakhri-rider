@@ -13,13 +13,13 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Rating, AirbnbRating } from "react-native-elements";
-
+ 
 function RiderLeadershipBoard() {
   const [data, setData] = React.useState(null);
-
+ 
   React.useEffect(async () => {
     const token = await SecureStore.getItemAsync("token");
-
+ 
     try {
       const res = await axios.get(
         "https://peaceful-citadel-48843.herokuapp.com/rider/leader-ship-board",
@@ -34,6 +34,7 @@ function RiderLeadershipBoard() {
       console.log(err);
     }
   }, []);
+  
   return (
     <ImageBackground
       source={require("../../assets/images/primary_bg_fill.png")}
@@ -136,26 +137,8 @@ function RiderLeadershipBoard() {
                     >
                       {el.rider.name}
                     </Text>
-
-                </View>
-                
-                <View style={{
-                    padding: 10,
-                    borderRadius: 8,
-                    margin: 0,
-                    borderWidth: 1,
-                    backgroundColor: "#fafafa",
-                    borderColor: "#ddd",
-                    shadowColor: "#000",
-                    shadowOffset: {
-                        width: 0,
-                        height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    elevation: 5,
-                }}>
-                    <View style={{
+                    <View
+                      style={{
                         display: "flex",
                         flexDirection: "row",
                         paddingTop: 5,
@@ -244,7 +227,9 @@ function RiderLeadershipBoard() {
                     </View>
                   </View>
                 </View>
-
+              </View>
+            ))}
+ 
           <View
             style={{
               height: 20,
@@ -255,12 +240,12 @@ function RiderLeadershipBoard() {
     </ImageBackground>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   bgImage: {
     flex: 1,
     justifyContent: "center",
   },
 });
-
+ 
 export default RiderLeadershipBoard;

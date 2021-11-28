@@ -13,9 +13,15 @@ export default function RiderLogin({navigation}) {
             if(data.token){
                 await SecureStore.setItemAsync("token", JSON.stringify(data.token));
                 await SecureStore.setItemAsync("userID", JSON.stringify(data.user._id));
-                navigation.navigate("TabController");
+                await SecureStore.setItemAsync("authenticRider", JSON.stringify(data.user.status));
+                if(data.user.status === "false"){
+                    navigation.navigate("TabController");
+                } else {
+                    // console.log("Rider is not authentic");
+                    navigation.navigate("WaitingPage");
+                }
+                
             }
-
         }catch(err){
             console.log(err);
         }
@@ -75,18 +81,20 @@ export default function RiderLogin({navigation}) {
                 {errors.password && <Text style={{
                     color: "#F00"
                 }}>Password is required.</Text>}
-                <View style={styles.inputWrapper}>
+                {/* <View style={styles.inputWrapper}>
                     <Text style={styles.secoundaryColorText}>Forgot Password</Text>
-                </View>
+                </View> */}
                 {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit(onSubmit)} /> */}
                 <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
                     <Text style={styles.appButtonText}>Sign In</Text>
                 </TouchableOpacity>
                 <View style={{ display: "flex", flexDirection: "row" }}>
                     <Text>Don't Have an account? </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("RiderRegister")}>
                     <Text style={{
                         color: "#02adfb"
                     }}>Create Account</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </ImageBackground>
@@ -104,6 +112,7 @@ const styles = StyleSheet.create({
     titleSectionProperties: {
         minWidth: "100%",
         padding: 22,
+        marginTop: 22,
     },
     inputWrapper: {
         minWidth: "100%",
@@ -115,6 +124,7 @@ const styles = StyleSheet.create({
     input: {
         minWidth: "100%",
         borderWidth: 1,
+        backgroundColor: "#fff",
         borderColor: "#05abf7",
         padding: 14,
         marginBottom: 25,

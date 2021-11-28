@@ -43,14 +43,14 @@ export default function RiderDocuments({ navigation }) {
             setImage(result.uri);
             let base64Img = `data:image/jpg;base64,${result.uri}`;
 
-            console.log('This is result',result);
+            console.log('This is result', result);
 
             let data = {
                 "file": base64Img,
                 "upload_preset": "insert your upload preset here,within quotations",
-              };
+            };
 
-              console.log(data);
+            console.log(data);
 
 
         }

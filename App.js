@@ -14,15 +14,52 @@ import TabController from './src/Features/TabController';
 import PaymentDetails from './src/utils/PaymentDetails';
 import RiderDocuments from './src/authentications/RiderDocuments';
 
+
+import * as SecureStore from "expo-secure-store";
+
 const Stack = createNativeStackNavigator();
 export default function App() {
+  const [token, setToken] = React.useState(null);
+  const [isAuth, setIsAuth] = React.useState(false);
+  React.useEffect(async () => {
+    const token = await SecureStore.getItemAsync("token");
+    const tempCarier = await SecureStore.getItemAsync("authenticRider");
+    const isAuthencateRider = tempCarier ? JSON.parse(tempCarier) : null;
+    console.log('this is it ', typeof isAuthencateRider);
+    if (token && isAuthencateRider) {
+      setToken(token);
+      setIsAuth(true);
+    }
+  }, []);
+
   return (
     <NavigationContainer>
+      { isAuth == true  &&(
       <Stack.Navigator>
+
+
+        <Stack.Screen styles={styles.container} name="TabController" options={{
+          headerShown: false
+        }} component={TabController} />
+
+        <Stack.Screen styles={styles.container} name="WaitingPage" options={{
+          headerShown: false
+        }} component={WaitingPage} />
+
+        <Stack.Screen styles={styles.container} name="PaymentDetails" options={{
+          headerShown: false
+        }} component={PaymentDetails} />
+
+      </Stack.Navigator>
+      )}
+      {(isAuth == false || isAuth == null) &&(
+      <Stack.Navigator>
+
+
         <Stack.Screen styles={styles.container} name="introStepper" options={{
           headerShown: false
         }} component={IntroStepper} />
-        
+
         <Stack.Screen styles={styles.container} name="RiderRegister" options={{
           headerShown: false
         }} component={RiderRegister} />
@@ -34,12 +71,14 @@ export default function App() {
         <Stack.Screen styles={styles.container} name="RiderLogin" options={{
           headerShown: false
         }} component={RiderLogin} />
-        <Stack.Screen styles={styles.container} name="CheckActive" options={{
+        {/* <Stack.Screen styles={styles.container} name="CheckActive" options={{
           headerShown: false
-        }} component={CheckActive} />
-        <Stack.Screen styles={styles.container} name="TabController" options={{
+        }} component={CheckActive} /> */}
+
+        {/* <Stack.Screen styles={styles.container} name="TabController" options={{
           headerShown: false
-        }} component={TabController} />
+        }} component={TabController} /> */}
+
         <Stack.Screen styles={styles.container} name="WaitingPage" options={{
           headerShown: false
         }} component={WaitingPage} />
@@ -49,16 +88,12 @@ export default function App() {
         }} component={PaymentDetails} />
 
       </Stack.Navigator>
+      )}
+
     </NavigationContainer>
-    // <View style={styles.container}>
-    //   <IntroStepper />
-    // </View>
-    // <View style={styles.container}>
-    //   <Text>Open up App.js to start working on your app!</Text>
-    //   <StatusBar style="auto" />
-    // </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
