@@ -42,6 +42,10 @@ export default function App() {
           headerShown: false
         }} component={TabController} />
 
+<Stack.Screen styles={styles.container} name="RiderLogin" options={{
+          headerShown: false
+        }} component={RiderLogin} />
+        
         <Stack.Screen styles={styles.container} name="WaitingPage" options={{
           headerShown: false
         }} component={WaitingPage} />
@@ -49,6 +53,10 @@ export default function App() {
         <Stack.Screen styles={styles.container} name="PaymentDetails" options={{
           headerShown: false
         }} component={PaymentDetails} />
+
+<Stack.Screen styles={styles.container} name="introStepper" options={{
+          headerShown: false
+        }} component={IntroStepper} />
 
       </Stack.Navigator>
       )}

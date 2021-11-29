@@ -14,12 +14,14 @@ export default function RiderLogin({navigation}) {
                 await SecureStore.setItemAsync("token", JSON.stringify(data.token));
                 await SecureStore.setItemAsync("userID", JSON.stringify(data.user._id));
                 await SecureStore.setItemAsync("authenticRider", JSON.stringify(data.user.status));
-                if(data.user.status === "false"){
+                
                     navigation.navigate("TabController");
-                } else {
-                    // console.log("Rider is not authentic");
-                    navigation.navigate("WaitingPage");
-                }
+                
+                
+                // else {
+                //     // console.log("Rider is not authentic");
+                //     navigation.navigate("WaitingPage");
+                // }
                 
             }
         }catch(err){

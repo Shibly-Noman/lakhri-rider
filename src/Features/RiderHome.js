@@ -227,7 +227,7 @@ function RiderHome({ navigation }) {
 
 
 
-            {userInfo != null &&(
+            {userInfo != null && (
                 <Modal
                     animationType="slide"
                     // transparent={true}
@@ -519,131 +519,131 @@ function RiderHome({ navigation }) {
                 </Modal>
             )}
 
-        {emptyStatus == false &&(
+            {emptyStatus == false && (
 
-            <View style={{
-                flex: 1,
-                paddingLeft: 20,
-                paddingRight: 20,
-                paddingTop: 50,
-            }}>
-                <Text style={{
-                    marginTop: 10,
-                    fontSize: 25,
-                    color: 'white'
-                }}>Welcome Mr. Nafis</Text>
-                <Text style={{
-                    marginTop: 10,
-                    fontSize: 15,
-                    marginBottom: 10,
-                    color: 'white'
-                }}>Here is the delivery list for you</Text>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {orders.map((order, index) => (
-                        <View key={index} style={styles.cardContainerInactive}>
-                            <View style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                            }} >
+                <View style={{
+                    flex: 1,
+                    paddingLeft: 20,
+                    paddingRight: 20,
+                    paddingTop: 50,
+                }}>
+                    <Text style={{
+                        marginTop: 10,
+                        fontSize: 25,
+                        color: 'white'
+                    }}>Welcome Mr. Nafis</Text>
+                    <Text style={{
+                        marginTop: 10,
+                        fontSize: 15,
+                        marginBottom: 10,
+                        color: 'white'
+                    }}>Here is the delivery list for you</Text>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {orders.map((order, index) => (
+                            <View key={index} style={styles.cardContainerInactive}>
                                 <View style={{
                                     display: 'flex',
-                                    flexDirection: 'column',
+                                    flexDirection: 'row',
                                     justifyContent: 'space-between',
-                                    width: '82%'
-                                }}>
-                                    <Text style={{
-                                        fontSize: 24
-                                    }}>{order.order.userId.name}</Text>
-                                    <Text style={{ color: '#FF4848' }}>{order.totalPrice} BDT</Text>
+                                }} >
+                                    <View style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'space-between',
+                                        width: '82%'
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 24
+                                        }}>{order.order.userId.name}</Text>
+                                        <Text style={{ color: '#FF4848' }}>{order.totalPrice} BDT</Text>
+                                    </View>
+                                    <View style={{
+                                        width: '18%'
+                                    }} >
+                                        <Image
+                                            source={{ uri: `${order.order.userId.imgURL}` }}
+                                            style={{
+                                                height: 50,
+                                                width: 50,
+                                                borderRadius: 50 / 2,
+                                                marginRight: 10
+                                            }}
+                                        />
+                                    </View>
                                 </View>
                                 <View style={{
-                                    width: '18%'
-                                }} >
-                                    <Image
-                                        source={{ uri: `${order.order.userId.imgURL}` }}
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    marginTop: 10,
+                                }}>
+                                    <Text style={{
+                                        marginTop: 15
+                                    }}>Number of Item</Text>
+                                    <Text style={{ marginTop: 15 }}>{order.totalQuantity}</Text>
+                                </View>
+                                <View style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <Text style={{
+
+                                        marginTop: 5
+                                    }}>Delivery Location</Text>
+                                    <Text style={{ marginTop: 5 }}>{order.order.deliveryAddress}</Text>
+
+                                </View>
+                                <View style={{
+                                    marginTop: 20,
+                                    borderRadius: 10,
+
+                                }}>
+
+                                    <Button
                                         style={{
-                                            height: 50,
-                                            width: 50,
-                                            borderRadius: 50 / 2,
-                                            marginRight: 10
+                                            borderRadius: 8,
+                                            flex: 1,
                                         }}
+                                        title="View Details"
+                                        type="outline"
+                                        onPress={() => getOrderList(order.order)}
                                     />
                                 </View>
                             </View>
-                            <View style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                marginTop: 10,
-                            }}>
-                                <Text style={{
-                                    marginTop: 15
-                                }}>Number of Item</Text>
-                                <Text style={{ marginTop: 15 }}>{order.totalQuantity}</Text>
-                            </View>
-                            <View style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}>
-                                <Text style={{
+                        ))}
 
-                                    marginTop: 5
-                                }}>Delivery Location</Text>
-                                <Text style={{ marginTop: 5 }}>{order.order.deliveryAddress}</Text>
+                    </ScrollView>
+                </View>
 
-                            </View>
-                            <View style={{
-                                marginTop: 20,
-                                borderRadius: 10,
+            )}
 
-                            }}>
-
-                                <Button
-                                    style={{
-                                        borderRadius: 8,
-                                        flex: 1,
-                                    }}
-                                    title="View Details"
-                                    type="outline"
-                                    onPress={() => getOrderList(order.order)}
-                                />
-                            </View>
-                        </View>
-                    ))}
-
-                </ScrollView>
-            </View>
-
-        )}
-
-        {emptyStatus == true &&(
-            <View style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}>
-                <Image source={require('../../assets/images/empty_folder.png')} resizeMode="contain" style={{
-                    height: 250,
-                    width: 250,
-                }} />
-
-                <Text style={{
-                    fontSize: 22,
-                    color: '#000000',
+            {emptyStatus == true && (
+                <View style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
                 }}>
-                    Sorry! 
-                </Text>
+                    <Image source={require('../../assets/images/empty_folder.png')} resizeMode="contain" style={{
+                        height: 250,
+                        width: 250,
+                    }} />
 
-                <Text style={{
-                    fontSize: 22,
-                    color: '#000000',
-                }}>
-                    You have no order yet.
-                </Text>
+                    <Text style={{
+                        fontSize: 22,
+                        color: '#000000',
+                    }}>
+                        Sorry!
+                    </Text>
 
-            </View>
-        )}
+                    <Text style={{
+                        fontSize: 22,
+                        color: '#000000',
+                    }}>
+                        You have no order yet.
+                    </Text>
+
+                </View>
+            )}
 
 
         </ImageBackground>

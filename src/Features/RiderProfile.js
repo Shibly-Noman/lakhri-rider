@@ -16,12 +16,20 @@ import * as SecureStore from "expo-secure-store";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import axios from "axios";
 
-export default function RiderProfile() {
+export default function RiderProfile({navigation}) {
   const [user, setUser] = React.useState(null);
   const [wallet, setWallet] = React.useState(null);
   const [cashReceived, setCashReceived] = React.useState(null);
   const [dailyTarget, setDailyTarget] = React.useState(null);
   const [monthlyTarget, setMonthlyTarget] = React.useState(null);
+
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const logout = async () => {
+    await SecureStore.deleteItemAsync("token");
+    await SecureStore.deleteItemAsync("authenticRider");
+    navigation.navigate('introStepper');
+  }
 
   React.useEffect(async () => {
     try {
@@ -111,6 +119,30 @@ export default function RiderProfile() {
               >
                 {user.phoneNumber}
               </Text>
+
+              <TouchableOpacity style={{
+                marginTop: 10,
+                height: 30,
+                width: 80,
+                backgroundColor: "#fff",
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 8,
+              }}
+                onPress={() => {
+                  logout();
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#0da5eb",
+                  }}
+                >
+                  Logout
+                </Text>
+              </TouchableOpacity>
+
             </View>
           </View>
         )}
