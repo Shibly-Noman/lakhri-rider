@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert, Platform, ScrollView, Touchable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useForm, Controller } from "react-hook-form";
+import * as SecureStore from 'expo-secure-store';
+import axios from "axios";
 
 export default function Wallet({ navigation }) {
     const [image, setImage] = useState(null);
+    const [pendingAmount, setPendingAmount] = useState(0);
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
@@ -35,11 +38,44 @@ export default function Wallet({ navigation }) {
         }
     })
     const { control, handleSubmit, formState: { errors } } = useForm();
-
+    
     const onSubmit = data => {
         setIsAuthenticated(true);
         console.log('This is data', data);
     }
+    useEffect(async () => {
+        let token = await SecureStore.getItemAsync("token");
+        token = JSON.parse(token);
+        let id = await SecureStore.getItemAsync("userID");
+        id = JSON.parse(id);
+        try {
+            const { data } = await axios.get(`https://peaceful-citadel-48843.herokuapp.com/payment/rider-payments/${id}/deposited`, {
+                headers: { "Authorization": "Bearer " + token }
+            })
+            // console.log(data);
+            setPendingAmount(data.pendingAmount);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }, []);
+
+    useEffect(async () => {
+        let token = await SecureStore.getItemAsync("token");
+        token = JSON.parse(token);
+        let id = await SecureStore.getItemAsync("userID");
+        id = JSON.parse(id);
+        try {
+            const { data } = await axios.get(`https://peaceful-citadel-48843.herokuapp.com/payment/rider-payments/history/${id}`, {
+                headers: { "Authorization": "Bearer " + token }
+            })
+            console.log(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }, []);
+
     const items = [{
         status: "paid",
         amountForLakhriFood: 0,
@@ -88,7 +124,7 @@ export default function Wallet({ navigation }) {
                         <Image style={styles.moneyImage}
                             source={require('../../assets/images/taka_big.png')}
                         />
-                        <Text style={styles.imageSubText}>1450.00</Text>
+                        <Text style={styles.imageSubText}>{pendingAmount}</Text>
                         <Text style={styles.imageBdtText}>BDT</Text>
                     </View>
                 </ImageBackground>

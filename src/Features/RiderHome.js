@@ -17,10 +17,17 @@ function RiderHome({ navigation }) {
     const [userPhone, setUserPhone] = React.useState(null);
     const [overallOrderId, setOverallOrderId] = React.useState(null);
     const [visibleActive, setVisibleActive] = useState(true);
-
     const [ratingModalVisible, setRatingModalVisible] = useState(false);
     const [emptyStatus, setEmptyStatus] = useState(false);
 
+
+    // Prior check for security
+    React.useEffect(async () => { 
+        let token = await SecureStore.getItemAsync("token");
+        if(token == null) {
+            navigation.navigate('introStepper');
+        }
+     }, []);
 
 
     // const[userId, setUserId] = React.useState(null);

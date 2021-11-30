@@ -36,18 +36,35 @@ export default function ResetPassword({ navigation }) {
 
         />
 
-        <Text style={styles.message}>Your request is on the process</Text>
+        <Text style={styles.message}>Congratulations!</Text>
 
-        <Text style={styles.messageSmall}>Your Registration Request Has Been Submitted. We're Working On Verification Right Now. We'll Notify you when it's done. Till then Stay with us.</Text>
+        <Text style={styles.messageSmall}>
+
+
+          Your Account is Successfully Verified. Go home to start your Journey With Us
+        </Text>
 
 
 
           {/* Remove the parent touchbale opacity tag, or just the method, this is only for Success Testing */}
+
+          <TouchableOpacity 
+                
+                    onPress={() => {
+                        navigation.navigate('TabController');
+                    }}
+
+                style={styles.appButtonContainer}>
+
+                    <Text style={styles.appButtonText}>Back to Home</Text>
+                </TouchableOpacity>
+
+
         <TouchableOpacity
           onPress={() => navigation.navigate('VerificationSuccess')}
         >
         <Text>
-          <Text style={styles.messageSmallColor}> Thank You</Text>
+          <Text style={styles.messageSmallColor}> Complete Your Profile </Text>
         </Text>
         </TouchableOpacity>
 
@@ -84,7 +101,7 @@ const styles = StyleSheet.create({
   },
   message: {
     color: "#000",
-    fontSize: 20,
+    fontSize: 30,
     marginTop: 10,
     marginTop: 30,
     textAlign: "center",

@@ -1,64 +1,34 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
+import { StyleSheet, ScrollView, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 
-export default function RiderLogin({navigation}) {
+export default function ResetPassword({navigation}) {
     const { control, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = async ({firstName:email, password}) => {
-        try{
-            const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
-            if(data.token){
-                await SecureStore.setItemAsync("token", JSON.stringify(data.token));
-                await SecureStore.setItemAsync("userID", JSON.stringify(data.user._id));
-                await SecureStore.setItemAsync("authenticRider", JSON.stringify(data.user.status));
-                
-                    navigation.navigate("TabController");
-                
-                
-                // else {
-                //     // console.log("Rider is not authentic");
-                //     navigation.navigate("WaitingPage");
-                // }
-                
-            }
-        }catch(err){
-            console.log(err);
-        }
+    const onSubmit = async ({password, rePassword}) => {
+       console.log(password, rePassword);
+       
+    //    if(email){
+    //        navigation.navigate('CheckMail');
+    //    }
     }
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
             <View style={styles.titleSectionProperties}>
-                <Text style={styles.primaryTitle}>Welcome Back</Text>
+                <Text style={styles.primaryTitle}>Reset Password</Text>
+                {/* <Text style={styles.message}>Enter the Email associate with your account. We'll send the instruction to reset your password</Text> */}
+                {/* <Text style={styles.message}></Text> */}
                 {/* <Text style={styles.primarySubTitle}>Hello there</Text> */}
                 {/* <Text style={styles.primarySubTitle}>Create account now.</Text> */}
             </View>
+            
+            
             <View style={styles.container}>
-
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Username Or Mail</Text>
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                            />
-                        </View>
-                    )}
-                    name="firstName"
-                    defaultValue=""
-                />
-                {errors.firstName && <Text style={{
-                    color: "#F00"
-                }}>Email is required.</Text>}
+            
+                <Text style={styles.message}>Enter your new password here</Text>
+                
                 <Controller
                     control={control}
                     rules={{
@@ -83,30 +53,55 @@ export default function RiderLogin({navigation}) {
                 {errors.password && <Text style={{
                     color: "#F00"
                 }}>Password is required.</Text>}
-                {/* <View style={styles.inputWrapper}>
-                    <Text style={styles.secoundaryColorText}>Forgot Password</Text>
-                </View> */}
-                {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit(onSubmit)} /> */}
-                <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
-                    <Text style={styles.appButtonText}>Sign In</Text>
-                </TouchableOpacity>
-                <View style={{ display: "flex", flexDirection: "row" }}>
-                    <Text>Don't Have an account? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("RiderRegister")}>
-                    <Text style={{
-                        color: "#02adfb"
-                    }}>Create Account</Text>
-                    </TouchableOpacity>
-                </View>
 
-                <TouchableOpacity style={{
-                    paddingTop: 10,
-                }} onPress={() => navigation.navigate("ForgotPasswordMailView")}>
-                    <Text style={{
-                        color: "#02adfb"
-                    }}>Forgot Password</Text>
-                    </TouchableOpacity>
+
+<Controller
+                    control={control}
+                    rules={{
+                        maxLength: 100,
+                        required: true,
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <View style={styles.inputWrapper}>
+                            <Text style={styles.inputLable}>Password</Text>
+                            <TextInput
+                                style={styles.input}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                secureTextEntry={true}
+                            />
+                        </View>
+                    )}
+                    name="rePassword"
+                    defaultValue=""
+                />
+                {errors.rePassword && <Text style={{
+                    color: "#F00"
+                }}>Please Type your password again</Text>}
+
+
+                
+                <TouchableOpacity 
+                // This route is for waiting page testing Remove it >>
+                    onPress={() => {
+                        navigation.navigate('WaitingPage');
+                    }}
+
+                // << This route is for reset password page testing Remove it
+
+                // this is legit method for reset password
+                    // >> onPress={handleSubmit(onSubmit)} 
+                // This is 
+                style={styles.appButtonContainer}>
+
+                    <Text style={styles.appButtonText}>Reset Password</Text>
+                </TouchableOpacity>
+                
+                
+                    
             </View>
+            
         </ImageBackground>
     );
 }
@@ -130,6 +125,13 @@ const styles = StyleSheet.create({
     inputLable: {
         marginBottom: 10,
         color: "#c2c4c7"
+    },
+    message:{
+        color: "#05abf7",
+        fontSize: 16,
+        marginTop: 10,
+        marginBottom: 30,
+        textAlign: "center",
     },
     input: {
         minWidth: "100%",

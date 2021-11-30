@@ -26,10 +26,15 @@ export default function RiderProfile({navigation}) {
   const [isLoading, setIsLoading] = React.useState(true);
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync("token");
-    await SecureStore.deleteItemAsync("authenticRider");
-    navigation.navigate('introStepper');
+    await SecureStore.deleteItemAsync("token").then(() => {
+      SecureStore.deleteItemAsync("authenticRider");
+      navigation.navigate('introStepper');  
+    });
+    // await SecureStore.deleteItemAsync("authenticRider");
+    // navigation.navigate('introStepper');
   }
+
+  
 
   React.useEffect(async () => {
     try {

@@ -67,12 +67,12 @@ export default function RiderRegister({ navigation }) {
     };
 
 
-    useEffect(() => {
-        setModalVisible(true);
-        // if (isAuthenticated) {
-        //     navigation.navigate('TabController');
-        // }
-    }, [])
+    // useEffect(() => {
+    //     setModalVisible(true);
+    //     // if (isAuthenticated) {
+    //     //     navigation.navigate('TabController');
+    //     // }
+    // }, [])
 
 
 
@@ -89,14 +89,10 @@ export default function RiderRegister({ navigation }) {
         }
     };
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigation.navigate('RiderDocuments');
-        }
-    })
+    
     const { control, handleSubmit, formState: { errors } } = useForm();
     const onSubmit = data => {
-        setIsAuthenticated(true);
+        setModalVisible(true);
         console.log('This is data', data);
     }
     return (
@@ -456,10 +452,10 @@ export default function RiderRegister({ navigation }) {
                                 />
                             </View>
                         )}
-                        name="phoneNumber"
+                        name="address"
                         defaultValue=""
                     />
-                    {errors.phoneNumber && <Text style={{
+                    {errors.address && <Text style={{
                         color: "#F00"
                     }}>Phone Number is required.</Text>}
 
