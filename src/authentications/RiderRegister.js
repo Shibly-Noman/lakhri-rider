@@ -94,218 +94,7 @@ export default function RiderRegister({ navigation }) {
     }
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
-            {/* MODAL STARTS */}
-            <Modal
-                animationType="slide"
-                // transparent={true}
-                fullScreen={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}>
-
-                <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
-                    <View style={styles.titleSectionProperties}>
-                        <Text style={styles.primaryTitle}>Please Upload your documents</Text>
-                    </View>
-                    <TouchableOpacity onPress={pickImage} style={{
-                        marginLeft: 20,
-                        backgroundColor: '#fff',
-                        borderRadius: 40,
-                        height: 80,
-                        width: 80,
-                        alignContent: 'center',
-                        justifyContent: 'center',
-                        paddingLeft: 10,
-                    }}>
-                        {!image &&
-                            <Image style={{
-                                height: 60,
-                                width: 60,
-                            }} source={require('../../assets/images/user.png')} />
-
-                        }
-                        {image && <Image source={{ uri: image }} style={{ width: 60, height: 60, borderRadius: 30, }} />}
-                    </TouchableOpacity >
-
-                    {/* PTT */}
-                    <View style={{
-                        minWidth: "100%",
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginTop: 70,
-                    }}>
-                        <View style={{
-                            maxWidth: '80%',
-                        }}>
-
-                            <Controller
-                                control={control}
-                                rules={{
-                                    maxLength: 100,
-                                    required: true,
-                                }}
-                                render={({ field: { onChange, onBlur, value } }) => (
-                                    <View style={styles.inputWrapper}>
-                                        <Text style={styles.inputLable}>Vehicle type</Text>
-                                        <View style={{
-                                            minWidth: "100%",
-                                            borderWidth: 1,
-                                            borderColor: "#05abf7",
-                                            // padding: 10,
-                                            marginBottom: 10,
-                                            borderRadius: 6,
-                                            backgroundColor: "#fff"
-                                        }}>
-                                            <Picker
-                                                selectedValue={vehicleType}
-                                                onValueChange={(itemValue, itemIndex) =>
-                                                    setVehicleType(itemValue)
-                                                }>
-                                                <Picker.Item label="Cycle" value="cycle" />
-                                                <Picker.Item label="Motorcycle" value="motorcycle" />
-                                            </Picker>
-                                        </View>
-                                    </View>
-                                )}
-                                name="vehicleType"
-                                defaultValue="cycle"
-                            />
-                            {errors.vehicleType && <Text style={{
-                                color: "#F00"
-                            }}>Vehicle Type is Required</Text>}
-
-                        </View>
-                    </View>
-
-
-
-                    <View style={styles.container}>
-                        <View style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                        }}>
-
-                            <TouchableOpacity onPress={pickNid} style={{
-                                backgroundColor: '#fff',
-                                alignContent: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: '#DDD',
-                                padding: 20,
-                                borderRadius: 15,
-                                margin: 10,
-                            }}>
-                                {!nidImage &&
-                                    <View style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}>
-                                        <Image style={{
-                                            height: 40,
-                                            width: 40,
-                                        }} source={require('../../assets/images/file.png')} />
-                                        <Text style={{
-                                            paddingTop: 10,
-                                            fontSize: 12,
-                                        }}>Upload your NID</Text>
-                                    </View>
-                                }
-                                {nidImage && <Image source={{ uri: nidImage }} style={{ width: 100, height: 100, borderRadius: 10, }} />}
-                            </TouchableOpacity >
-
-
-                        </View>
-
-                        {vehicleType == 'motorcycle' && (
-
-                            <View style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                            }}>
-
-                                <TouchableOpacity onPress={pickDLicence} style={{
-                                    backgroundColor: '#fff',
-                                    alignContent: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: '#DDD',
-                                    padding: 20,
-                                    borderRadius: 15,
-                                    margin: 10,
-                                }}>
-                                    {!dLicenceImage &&
-                                        <View style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}>
-                                            <Image style={{
-                                                height: 40,
-                                                width: 40,
-                                            }} source={require('../../assets/images/file.png')} />
-                                            <Text style={{
-                                                paddingTop: 10,
-                                                fontSize: 12,
-                                            }}>Driving Licence</Text>
-                                        </View>
-                                    }
-                                    {dLicenceImage && <Image source={{ uri: dLicenceImage }} style={{ width: 100, height: 100, borderRadius: 10, }} />}
-                                </TouchableOpacity >
-
-
-                                <TouchableOpacity onPress={pickBLicence} style={{
-                                    backgroundColor: '#fff',
-                                    alignContent: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: '#DDD',
-                                    padding: 20,
-                                    borderRadius: 15,
-                                    margin: 10,
-                                }}>
-                                    {!bLicenceImage &&
-                                        <View style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}>
-                                            <Image style={{
-                                                height: 40,
-                                                width: 40,
-                                            }} source={require('../../assets/images/file.png')} />
-                                            <Text style={{
-                                                paddingTop: 10,
-                                                fontSize: 12,
-                                            }}>Registration Paper</Text>
-                                        </View>
-                                    }
-                                    {bLicenceImage && <Image source={{ uri: bLicenceImage }} style={{ width: 100, height: 100, borderRadius: 10, }} />}
-                                </TouchableOpacity >
-
-
-                            </View>
-
-                        )}
-
-
-
-
-
-
-                        {/* 
-                <View style={styles.inputWrapper}>
-                    <Text style={styles.secoundaryColorText}>Forgot Password</Text>
-                </View> */}
-
-                        {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit(onSubmit)} /> */}
-                        <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
-                            <Text style={styles.appButtonText}>Submit</Text>
-                        </TouchableOpacity>
-
-
-
-                    </View>
-                </ImageBackground>
-
-
-            </Modal>
-            {/* MODAL ENDS */}
+            
             <View style={styles.titleSectionProperties}>
                 <Text style={styles.primaryTitle}>Welcome! We'd like to know about you</Text>
                 {/* <Text style={styles.primarySubTitle}>Hello there</Text> */}
@@ -454,12 +243,156 @@ export default function RiderRegister({ navigation }) {
                     />
                     {errors.address && <Text style={{
                         color: "#F00"
-                    }}>Phone Number is required.</Text>}
+                    }}>Address is required.</Text>}
+
+
+
+<Controller
+                                control={control}
+                                rules={{
+                                    maxLength: 100,
+                                    required: true,
+                                }}
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <View style={styles.inputWrapper}>
+                                        <Text style={styles.inputLable}>Vehicle type</Text>
+                                        <View style={{
+                                            minWidth: "100%",
+                                            borderWidth: 1,
+                                            borderColor: "#05abf7",
+                                            // padding: 10,
+                                            marginBottom: 10,
+                                            borderRadius: 6,
+                                            backgroundColor: "#fff"
+                                        }}>
+                                            <Picker
+                                                selectedValue={vehicleType}
+                                                onValueChange={(itemValue, itemIndex) =>
+                                                    setVehicleType(itemValue)
+                                                }>
+                                                <Picker.Item label="Cycle" value="cycle" />
+                                                <Picker.Item label="Motorcycle" value="motorcycle" />
+                                            </Picker>
+                                        </View>
+                                    </View>
+                                )}
+                                name="vehicleType"
+                                defaultValue="cycle"
+                            />
+                            {errors.vehicleType && <Text style={{
+                                color: "#F00"
+                            }}>Vehicle Type is Required</Text>}
+
+
+
+
+<TouchableOpacity onPress={pickNid} style={{
+                                backgroundColor: '#fff',
+                                alignContent: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#DDD',
+                                padding: 20,
+                                borderRadius: 15,
+                                marginTop: 15,
+                                marginBottom: 15,
+                            }}>
+                                {!nidImage &&
+                                    <View style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Image style={{
+                                            height: 40,
+                                            width: 40,
+                                        }} source={require('../../assets/images/file.png')} />
+                                        <Text style={{
+                                            paddingTop: 10,
+                                            fontSize: 12,
+                                        }}>Upload your NID</Text>
+                                    </View>
+                                }
+                                {nidImage && <Image source={{ uri: nidImage }} style={{ width: 100, height: 100, borderRadius: 10, }} />}
+                            </TouchableOpacity >
+
+
+                        
+
+                        {vehicleType == 'motorcycle' && (
+
+                            <View style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                            }}>
+
+                                <TouchableOpacity onPress={pickDLicence} style={{
+                                    backgroundColor: '#fff',
+                                    alignContent: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#DDD',
+                                    padding: 20,
+                                    borderRadius: 15,
+                                    width: '48%',
+                                    // margin: 10,
+                                }}>
+                                    {!dLicenceImage &&
+                                        <View style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}>
+                                            <Image style={{
+                                                height: 40,
+                                                width: 40,
+                                            }} source={require('../../assets/images/file.png')} />
+                                            <Text style={{
+                                                paddingTop: 10,
+                                                fontSize: 12,
+                                            }}>Driving Licence</Text>
+                                        </View>
+                                    }
+                                    {dLicenceImage && <Image source={{ uri: dLicenceImage }} style={{ width: 100, height: 100, borderRadius: 10, }} />}
+                                </TouchableOpacity >
+
+
+                                <TouchableOpacity onPress={pickBLicence} style={{
+                                    backgroundColor: '#fff',
+                                    alignContent: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#DDD',
+                                    padding: 20,
+                                    borderRadius: 15,
+                                    width: '48%',
+                                    // margin: 10,
+                                }}>
+                                    {!bLicenceImage &&
+                                        <View style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}>
+                                            <Image style={{
+                                                height: 40,
+                                                width: 40,
+                                            }} source={require('../../assets/images/file.png')} />
+                                            <Text style={{
+                                                paddingTop: 10,
+                                                fontSize: 12,
+                                            }}>Registration Paper</Text>
+                                        </View>
+                                    }
+                                    {bLicenceImage && <Image source={{ uri: bLicenceImage }} style={{ width: 100, height: 100, borderRadius: 10, }} />}
+                                </TouchableOpacity >
+
+
+                            </View>
+
+                        )}
 
 
                     <View style={{
                         height: 50,
                     }}>
+
+
 
                     </View>
 
