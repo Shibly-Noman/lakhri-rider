@@ -189,7 +189,7 @@ function RiderLeadershipBoard() {
                           fontSize: 15,
                         }}
                       >
-                        1920
+                        {el.totalCompletedOrders}
                       </Text>
                     </View>
                     <View
