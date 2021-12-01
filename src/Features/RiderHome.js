@@ -207,9 +207,9 @@ function RiderHome({ navigation }) {
                                 // paddingBottom: 30,
                             }}
                             title="Submit Your Review"
-                            // onPress={() => {() => {
-                            //     setModalVisible(!ratingModalVisible);
-                            // }}
+                            onPress={() => {
+                                setRatingModalVisible(!ratingModalVisible);
+                            }}
                             buttonStyle={{ backgroundColor: "#179bd7", borderRadius: 10 }}
 
                         />
