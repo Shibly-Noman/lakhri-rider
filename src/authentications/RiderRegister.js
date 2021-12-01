@@ -8,13 +8,10 @@ export default function RiderRegister({ navigation }) {
     const [image, setImage] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
-
     const [nidImage, setNidImage] = useState(null);
     const [dLicenceImage, setDLicenceImage] = useState(null);
     const [bLicenceImage, setBLicenceImage] = useState(null);
     const [vehicleType, setVehicleType] = useState(null);
-
-
 
     useEffect(() => {
         (async () => {

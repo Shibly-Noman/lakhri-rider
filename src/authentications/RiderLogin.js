@@ -3,25 +3,25 @@ import { useEffect } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
-import * as SecureStore from 'expo-secure-store';
+import auth from '../auth';
 
 export default function RiderLogin({navigation}) {
     const { control, handleSubmit, formState: { errors } } = useForm();
     const onSubmit = async ({firstName:email, password}) => {
         try{
             const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
+            
             if(data.token){
-                await SecureStore.setItemAsync("token", JSON.stringify(data.token));
-                await SecureStore.setItemAsync("userID", JSON.stringify(data.user._id));
-                await SecureStore.setItemAsync("authenticRider", JSON.stringify(data.user.status));
-                
+                await auth.setToken(JSON.stringify(data.token))
+                await auth.setUserID(JSON.stringify(data.user._id));
+                await auth.setStatus(JSON.stringify(data.user.status));
+
+                if(data.user.status === "true"){
                     navigation.navigate("TabController");
+                }else{
+                    navigation.navigate("WaitingPage");
+                }
                 
-                
-                // else {
-                //     // console.log("Rider is not authentic");
-                //     navigation.navigate("WaitingPage");
-                // }
                 
             }
         }catch(err){

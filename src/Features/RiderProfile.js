@@ -7,11 +7,12 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
+  ToastAndroid
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import * as SecureStore from "expo-secure-store";
+import auth from "../auth"
 
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import axios from "axios";
@@ -22,53 +23,69 @@ export default function RiderProfile({navigation}) {
   const [cashReceived, setCashReceived] = React.useState(null);
   const [dailyTarget, setDailyTarget] = React.useState(null);
   const [monthlyTarget, setMonthlyTarget] = React.useState(null);
+  const [deps, setDeps] = React.useState(Math.random());
 
   const [isLoading, setIsLoading] = React.useState(true);
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync("token").then(() => {
-      SecureStore.deleteItemAsync("authenticRider");
-      navigation.navigate('introStepper');  
+    await auth.logout(()=>{
+      navigation.navigate('introStepper');
     });
-    // await SecureStore.deleteItemAsync("authenticRider");
-    // navigation.navigate('introStepper');
+    
   }
 
-  
+  const showToast = (message) => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
+
+  const handleWithdraw = async ()=>{
+    const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
+    const userID = await auth.getUserID();
+    const headers = await auth.getHeaders();
+
+    if(wallet.pendingAmount < 1000){
+      showToast("Amount must be minimum 1000");
+      return;
+    }
+
+    await axios.patch(`${baseURL}/payment/make-withdraw/${userID}`, {}, headers)
+    showToast("Withdraw request successful!")
+    setDeps(Math.random())
+  }
 
   React.useEffect(async () => {
     try {
-      const userID = await SecureStore.getItemAsync("userID");
-      const token = await SecureStore.getItemAsync("token");
+      const userID = await auth.getUserID();
+      const token = await auth.getToken();
       const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
       const config = {
-        headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+        headers: { Authorization: `Bearer ${token}` },
       };
       axios
-        .get(`${baseURL}/auth/rider/${JSON.parse(userID)}`, config)
+        .get(`${baseURL}/auth/rider/${userID}`, config)
         .then((res) => setUser(res.data));
       axios
         .get(
-          `${baseURL}/payment/rider-payments/${JSON.parse(userID)}/deposited`,
+          `${baseURL}/payment/rider-payments/${userID}/deposited`,
           config
         )
         .then((res) => setWallet(res.data));
       axios
         .get(
-          `${baseURL}/payment/rider-payments/${JSON.parse(userID)}/pending`,
+          `${baseURL}/payment/rider-payments/${userID}/pending`,
           config
         )
         .then((res) => setCashReceived(res.data));
       axios
-        .get(`${baseURL}/auth/rider/daily/${JSON.parse(userID)}`, config)
+        .get(`${baseURL}/auth/rider/daily/${userID}`, config)
         .then((res) => setDailyTarget(res.data));
       axios
-        .get(`${baseURL}/auth/rider/monthly/${JSON.parse(userID)}`, config)
+        .get(`${baseURL}/auth/rider/monthly/${userID}`, config)
         .then((res) => setMonthlyTarget(res.data));
     } catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [deps]);
 
   return (
     <ImageBackground
@@ -197,6 +214,7 @@ export default function RiderProfile({navigation}) {
                     justifyContent: "center",
                     marginBottom: 10,
                   }}
+                  onPress={handleWithdraw}
                 >
                   <Text
                     style={{
@@ -239,28 +257,6 @@ export default function RiderProfile({navigation}) {
                 >
                   {cashReceived.walletAmount} BDT
                 </Text>
-
-                <TouchableOpacity
-                  style={{
-                    height: 40,
-                    width: 130,
-                    marginTop: 20,
-                    borderRadius: 10,
-                    backgroundColor: "#0da5eb",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 10,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "#fff",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Diposit
-                  </Text>
-                </TouchableOpacity>
               </View>
             </View>
           )}
@@ -299,7 +295,7 @@ export default function RiderProfile({navigation}) {
                   textAlign: "center",
                 }}
               >
-                {(dailyTarget.dailyGoalReached*100) /dailyTarget.dailyGoal}%
+                {((dailyTarget.dailyGoalReached*100) /dailyTarget.dailyGoal).toFixed(2)}%
               </Text>
 
               <View
@@ -363,7 +359,7 @@ export default function RiderProfile({navigation}) {
                   textAlign: "center",
                 }}
               >
-                {(monthlyTarget.monthlyGoalReached*100) /monthlyTarget.monthlyGoal}%
+                {((monthlyTarget.monthlyGoalReached*100) /monthlyTarget.monthlyGoal).toFixed(2)}%
               </Text>
 
               <View
