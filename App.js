@@ -87,6 +87,14 @@ export default function App() {
           }}
           component={ResetPassword}
         />
+        <Stack.Screen
+            styles={styles.container}
+            name="TabController"
+            options={{
+              headerShown: false,
+            }}
+            component={TabController}
+          />
       {status === "false" && (
           <Stack.Screen
             styles={styles.container}
@@ -96,18 +104,6 @@ export default function App() {
             }}
             component={WaitingPage}
           />
-      )}
-
-      {token && status === "true" && (
-          <Stack.Screen
-            styles={styles.container}
-            name="TabController"
-            options={{
-              headerShown: false,
-            }}
-            component={TabController}
-          />
-        
       )}
       </Stack.Navigator>
     </NavigationContainer>
