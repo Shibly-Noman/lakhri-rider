@@ -142,12 +142,6 @@ export default class introStepper extends React.Component {
             fontWeight: 'bold',
             color: '#fff',
           }}> Lakhri Rider </Text>
-          <Text style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-            color: '#fff',
-          }}> Fantastic Opportunity  </Text>
           <View style={{
             width: "100%",
             borderRadius: 8,
