@@ -17,18 +17,26 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
 import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
+
 export default function RiderRegister({ navigation }) {
-  const [image, setImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [userImage, setUserImage] = useState(null);
   const [nidImage, setNidImage] = useState(null);
   const [dLicenceImage, setDLicenceImage] = useState(null);
   const [bLicenceImage, setBLicenceImage] = useState(null);
   const [vehicleType, setVehicleType] = useState(null);
 
+  const [userImageURL, setUserImageURL] = useState(null);
+  const [nidImageURL, setNidImageUrl] = useState(null);
+  const [dLicenceImageURL, setDLicenceImageURL] = useState(null);
+  const [bLicenceImageURL, setBLicenceImageURL] = useState(null);
+  const [submitButtonText, setSubmitButtonText] = useState("SUBMIT");
+
   useEffect(() => {
     (async () => {
-      if (Platform.OS !== "web") {
+      if (Platform.OS !== "android") {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
@@ -38,74 +46,59 @@ export default function RiderRegister({ navigation }) {
     })();
   }, []);
 
-  const pickNid = async () => {
+  pickImage = async (imageSetter, imageURLSetter) => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 1,
+      allowsEditing: false,
+      aspect: [4, 3],
+      base64: true,
     });
-    console.log(result);
+
     if (!result.cancelled) {
-      setNidImage(result.uri);
+      imageSetter(result.uri);
+
+      let base64Img = `data:image/jpg;base64,${result.base64}`;
+
+      //Add your cloud name
+      let apiUrl = "https://api.cloudinary.com/v1_1/lakhrifood/image/upload";
+
+      let data = {
+        file: base64Img,
+        upload_preset: "ml_default",
+      };
+
+      fetch(apiUrl, {
+        body: JSON.stringify(data),
+        headers: {
+          "content-type": "application/json",
+        },
+        method: "POST",
+      })
+        .then(async (r) => {
+          let data = await r.json();
+          imageURLSetter(data.secure_url);
+        })
+        .catch((err) => console.log(err));
     }
   };
-
-  const pickDLicence = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 1,
-    });
-    console.log(result);
-    if (!result.cancelled) {
-      setDLicenceImage(result.uri);
-    }
-  };
-
-  const pickBLicence = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 1,
-    });
-    console.log(result);
-    if (!result.cancelled) {
-      setBLicenceImage(result.uri);
-    }
-  };
-
-  // useEffect(() => {
-  //     setModalVisible(true);
-  //     // if (isAuthenticated) {
-  //     //     navigation.navigate('TabController');
-  //     // }
-  // }, [])
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 1,
-    });
-    console.log(result);
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    setModalVisible(true);
-    console.log("This is data", data);
+  const onSubmit = async (data) => {
+    
+    const payload = {
+      ...data,
+      imgURL: userImageURL,
+      drivingLicenceImgURL: dLicenceImageURL,
+      carPaper: bLicenceImageURL,
+      nidImgURL: nidImageURL,
+    };
+
+    const res = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signup", payload);
+    
+    setModalVisible(false);
   };
   return (
     <ImageBackground
@@ -121,7 +114,7 @@ export default function RiderRegister({ navigation }) {
         {/* <Text style={styles.primarySubTitle}>Create account now.</Text> */}
       </View>
       <TouchableOpacity
-        onPress={pickImage}
+        onPress={() => pickImage(setUserImage, setUserImageURL)}
         style={{
           marginLeft: 20,
           backgroundColor: "#fff",
@@ -133,7 +126,7 @@ export default function RiderRegister({ navigation }) {
           paddingLeft: 10,
         }}
       >
-        {!image && (
+        {!userImage && (
           <Image
             style={{
               height: 60,
@@ -142,9 +135,9 @@ export default function RiderRegister({ navigation }) {
             source={require("../../assets/images/user.png")}
           />
         )}
-        {image && (
+        {userImage && (
           <Image
-            source={{ uri: image }}
+            source={{ uri: userImage }}
             style={{ width: 60, height: 60, borderRadius: 30 }}
           />
         )}
@@ -190,8 +183,6 @@ export default function RiderRegister({ navigation }) {
               <View style={styles.inputWrapper}>
                 <Text style={styles.inputLable}>Email</Text>
                 <TextInput
-                autoComplete="email"
-                keyboardType="email"
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -221,7 +212,6 @@ export default function RiderRegister({ navigation }) {
               <View style={styles.inputWrapper}>
                 <Text style={styles.inputLable}>Phone Number</Text>
                 <TextInput
-                keyboardType='numeric'
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -280,8 +270,10 @@ export default function RiderRegister({ navigation }) {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLable}>Location</Text>
+                <Text style={styles.inputLable}>Address</Text>
                 <TextInput
+                  multiline
+                  numberOfLines={3}
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -289,39 +281,10 @@ export default function RiderRegister({ navigation }) {
                 />
               </View>
             )}
-            name="location"
+            name="address"
             defaultValue=""
           />
-          {errors.location && (
-            <Text
-              style={{
-                color: "#F00",
-              }}
-            >
-              Address is required.
-            </Text>
-          )}
-
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputLable}>city</Text>
-                <TextInput
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              </View>
-            )}
-            name="city"
-            defaultValue=""
-          />
-          {errors.city && (
+          {errors.address && (
             <Text
               style={{
                 color: "#F00",
@@ -377,7 +340,7 @@ export default function RiderRegister({ navigation }) {
           )}
 
           <TouchableOpacity
-            onPress={pickNid}
+            onPress={() => pickImage(setNidImage, setNidImageUrl)}
             style={{
               backgroundColor: "#fff",
               alignContent: "center",
@@ -430,7 +393,7 @@ export default function RiderRegister({ navigation }) {
               }}
             >
               <TouchableOpacity
-                onPress={pickDLicence}
+                onPress={() => pickImage(setDLicenceImage, setDLicenceImageURL)}
                 style={{
                   backgroundColor: "#fff",
                   alignContent: "center",
@@ -475,7 +438,7 @@ export default function RiderRegister({ navigation }) {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={pickBLicence}
+                onPress={() => pickImage(setBLicenceImage, setBLicenceImageURL)}
                 style={{
                   backgroundColor: "#fff",
                   alignContent: "center",
@@ -538,7 +501,7 @@ export default function RiderRegister({ navigation }) {
           onPress={handleSubmit(onSubmit)}
           style={styles.appButtonContainer}
         >
-          <Text style={styles.appButtonText}>Sumit</Text>
+          <Text style={styles.appButtonText}>{submitButtonText}</Text>
         </TouchableOpacity>
 
         {/* <View style={{ display: "flex", flexDirection: "row" }}>
