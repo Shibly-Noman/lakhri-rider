@@ -229,7 +229,6 @@ function RiderHome({ navigation }) {
               buttonStyle={{ backgroundColor: "#179bd7", borderRadius: 10 }}
             />
           </View>
-
           {/* <TouchableOpacity style={{
                         position: 'absolute',
                         bottom: 20,
@@ -376,8 +375,7 @@ function RiderHome({ navigation }) {
                     >
                       {order.vendorID.phoneNumber}
                     </Text>
-
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         // width: 80,
                         // borderWidth: 1,
@@ -413,7 +411,7 @@ function RiderHome({ navigation }) {
                       >
                         Rate Vendor
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                   <View
                     style={{

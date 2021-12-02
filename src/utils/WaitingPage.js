@@ -1,63 +1,46 @@
-import * as React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, ScrollView, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
+import * as React from "react";
+import { useEffect } from "react";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+  Text,
+  Image,
+  View,
+} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
-import * as SecureStore from 'expo-secure-store';
-
+import * as SecureStore from "expo-secure-store";
 export default function ResetPassword({ navigation }) {
-  const { control, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = async ({ password, rePassword }) => {
-    console.log(password, rePassword);
-
-    //    if(email){
-    //        navigation.navigate('CheckMail');
-    //    }
-  }
   return (
-    <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
-
-
-
+    <ImageBackground
+      source={require("../../assets/images/primary_bg_fill.png")}
+      resizeMode="cover"
+      style={styles.bgImage}
+    >
       <View style={styles.container}>
-
-
-
-
-
-
-
-        <Image source={require('../../assets/images/waiting.png')}
-
+        <Image
+          source={require("../../assets/images/waiting.png")}
           style={{
             height: 140,
             width: 100,
           }}
-
         />
-
         <Text style={styles.message}>Your request is on the process</Text>
-
-        <Text style={styles.messageSmall}>Your Registration Request Has Been Submitted. We're Working On Verification Right Now. We'll Notify you when it's done. Till then Stay with us.</Text>
-
-
-
-          {/* Remove the parent touchbale opacity tag, or just the method, this is only for Success Testing */}
-        <TouchableOpacity
-          onPress={() => navigation.navigate('VerificationSuccess')}
-        >
-        <Text>
-          <Text style={styles.messageSmallColor}> Thank You</Text>
+        <Text style={styles.messageSmall}>
+          Your Registration Request Has Been Submitted. We're Working On
+          Verification Right Now. We'll Notify you when it's done. Please Come
+          Back later.
         </Text>
+        {/* Remove the parent touchbale opacity tag, or just the method, this is only for Success Testing */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("VerificationSuccess")}
+        >
+          <Text>
+            <Text style={styles.messageSmallColor}> Back to log in page</Text>
+          </Text>
         </TouchableOpacity>
-
-
-
-
-
-
       </View>
-
     </ImageBackground>
   );
 }
@@ -65,8 +48,8 @@ export default function ResetPassword({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minWidth: "100%",
     padding: 24,
   },
@@ -80,7 +63,7 @@ const styles = StyleSheet.create({
   },
   inputLable: {
     marginBottom: 10,
-    color: "#c2c4c7"
+    color: "#c2c4c7",
   },
   message: {
     color: "#000",
@@ -122,18 +105,18 @@ const styles = StyleSheet.create({
   },
   primaryTitle: {
     fontSize: 22,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 10,
     color: "#FFFFFF",
   },
   primarySubTitle: {
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     color: "#FFFFFF",
   },
   bgImage: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   appButtonContainer: {
     elevation: 8,
@@ -147,13 +130,12 @@ const styles = StyleSheet.create({
   appButtonText: {
     fontSize: 14,
     color: "#fff",
-    fontWeight: '500',
+    fontWeight: "500",
     alignSelf: "center",
-    textTransform: "uppercase"
+    textTransform: "uppercase",
   },
   secoundaryColorText: {
     color: "#02adfbdd",
     fontSize: 14,
-  }
+  },
 });
-
