@@ -58,9 +58,16 @@ function RiderHome({ navigation }) {
     setUserPhone(order.userPhone);
     setModalVisible(true);
     setOverallOrderId(order._id);
+    console.log(order)
   };
 
-  const orderComplete = () => {};
+  const orderComplete = async (orderID) => {
+    const headers = await auth.getHeaders();
+
+    const res = await axios.patch(`https://peaceful-citadel-48843.herokuapp.com/payment/rider-payment-and-order-complete/${orderID}`, {}, headers)
+
+
+  };
 
   const markIndividualDone = async (order) => {
     let token = await auth.getToken();
@@ -272,11 +279,6 @@ function RiderHome({ navigation }) {
                 >
                   {userInfo.name}
                 </Text>
-                {/* <Text
-                                style={{
-                                    color: '#fff',
-                                }}
-                            >109/2 Arjotpara Mohakhali, oposite of Jame Mosque</Text> */}
                 <Text
                   style={{
                     color: "#fff",
@@ -344,7 +346,7 @@ function RiderHome({ navigation }) {
                   shadowRadius: 3.84,
                   elevation: 5,
                 }}
-              >
+              > 
                 <View style={{ display: "flex", flexDirection: "row" }}>
                   <View
                     style={{
@@ -580,6 +582,7 @@ function RiderHome({ navigation }) {
                     justifyContent: "center",
                     alignItems: "center",
                   }}
+                  onPress={()=>orderComplete(overallOrderId)}
                 >
                   <Text style={{ color: "#fff", fontSize: 17 }}>Complete</Text>
                 </TouchableOpacity>
@@ -640,7 +643,7 @@ function RiderHome({ navigation }) {
                         fontSize: 24,
                       }}
                     >
-                      {order.order.userId.name}
+                      {order.userId.name}
                     </Text>
                     <Text style={{ color: "#FF4848" }}>
                       {order.totalPrice} BDT
@@ -652,7 +655,7 @@ function RiderHome({ navigation }) {
                     }}
                   >
                     <Image
-                      source={{ uri: `${order.order.userId.imgURL}` }}
+                      source={{ uri: `${order.userId.imgURL}` }}
                       style={{
                         height: 50,
                         width: 50,
@@ -694,7 +697,7 @@ function RiderHome({ navigation }) {
                     Delivery Location
                   </Text>
                   <Text style={{ marginTop: 5 }}>
-                    {order.order.deliveryAddress}
+                    {order.deliveryAddress}
                   </Text>
                 </View>
                 <View
@@ -710,7 +713,7 @@ function RiderHome({ navigation }) {
                     }}
                     title="View Details"
                     type="outline"
-                    onPress={() => getOrderList(order.order)}
+                    onPress={() => getOrderList(order)}
                   />
                 </View>
               </View>
