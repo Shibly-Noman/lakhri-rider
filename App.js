@@ -95,16 +95,6 @@ export default function App() {
           }}
           component={TabController}
         />
-        {/* Delete the screen */}
-        <Stack.Screen
-          styles={styles.container}
-          name="WaitingPage"
-          options={{
-            headerShown: false,
-          }}
-          component={WaitingPage}
-        />
-        {/* Delete The screen */}
         {status === "false" && (
           <Stack.Screen
             styles={styles.container}
