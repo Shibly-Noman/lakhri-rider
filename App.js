@@ -88,14 +88,24 @@ export default function App() {
           component={ResetPassword}
         />
         <Stack.Screen
-            styles={styles.container}
-            name="TabController"
-            options={{
-              headerShown: false,
-            }}
-            component={TabController}
-          />
-      {status === "false" && (
+          styles={styles.container}
+          name="TabController"
+          options={{
+            headerShown: false,
+          }}
+          component={TabController}
+        />
+        {/* Delete the screen */}
+        <Stack.Screen
+          styles={styles.container}
+          name="WaitingPage"
+          options={{
+            headerShown: false,
+          }}
+          component={WaitingPage}
+        />
+        {/* Delete The screen */}
+        {status === "false" && (
           <Stack.Screen
             styles={styles.container}
             name="WaitingPage"
@@ -104,7 +114,7 @@ export default function App() {
             }}
             component={WaitingPage}
           />
-      )}
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

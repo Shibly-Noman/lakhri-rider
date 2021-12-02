@@ -44,7 +44,7 @@ export default function RiderLogin({navigation}) {
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Username Or Mail</Text>
+                            <Text style={styles.inputLable}>Enter Email</Text>
                             <TextInput
                                 style={styles.input}
                                 onBlur={onBlur}
