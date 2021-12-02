@@ -87,7 +87,6 @@ export default function RiderRegister({ navigation }) {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
-    
     const payload = {
       ...data,
       imgURL: userImageURL,
@@ -96,8 +95,11 @@ export default function RiderRegister({ navigation }) {
       nidImgURL: nidImageURL,
     };
 
-    const res = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signup", payload);
-    
+    const res = await axios.post(
+      "https://peaceful-citadel-48843.herokuapp.com/auth/rider/signup",
+      payload
+    );
+
     setModalVisible(false);
   };
   return (
@@ -212,6 +214,7 @@ export default function RiderRegister({ navigation }) {
               <View style={styles.inputWrapper}>
                 <Text style={styles.inputLable}>Phone Number</Text>
                 <TextInput
+                  keyboardType="numeric"
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -262,7 +265,6 @@ export default function RiderRegister({ navigation }) {
               Password is required.
             </Text>
           )}
-
           <Controller
             control={control}
             rules={{
@@ -270,10 +272,8 @@ export default function RiderRegister({ navigation }) {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLable}>Address</Text>
+                <Text style={styles.inputLable}>Location</Text>
                 <TextInput
-                  multiline
-                  numberOfLines={3}
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -281,19 +281,46 @@ export default function RiderRegister({ navigation }) {
                 />
               </View>
             )}
-            name="address"
+            name="location"
             defaultValue=""
           />
-          {errors.address && (
+          {errors.location && (
             <Text
               style={{
                 color: "#F00",
               }}
             >
-              Address is required.
+              Location is required.
             </Text>
           )}
-
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputLable}>City</Text>
+                <TextInput
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              </View>
+            )}
+            name="city"
+            defaultValue=""
+          />
+          {errors.city && (
+            <Text
+              style={{
+                color: "#F00",
+              }}
+            >
+              City is required.
+            </Text>
+          )}
           <Controller
             control={control}
             rules={{
