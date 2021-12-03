@@ -32,6 +32,7 @@ function RiderHome({ navigation }) {
   const [overallOrderId, setOverallOrderId] = React.useState(null);
   const [visibleActive, setVisibleActive] = useState(true);
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [rating, setRating] = useState(0);
 
   // Prior check for security
@@ -49,10 +50,8 @@ function RiderHome({ navigation }) {
     
   }, []);
 
-  // const[userId, setUserId] = React.useState(null);
-  // const[userToken, setUserToken] = React.useState(null);
-
   const getOrderList = (order) => {
+    setTotalAmount(order.totalPrice);
     setOrderList(order.productInfo);
     setUserInfo(order.userId);
     setUserPhone(order.userPhone);
@@ -66,7 +65,7 @@ function RiderHome({ navigation }) {
 
     const res = await axios.patch(`https://peaceful-citadel-48843.herokuapp.com/payment/rider-payment-and-order-complete/${orderID}`, {}, headers)
 
-
+    setModalVisible(!modalVisible);
   };
 
   const markIndividualDone = async (order) => {
@@ -118,25 +117,6 @@ function RiderHome({ navigation }) {
     }
   };
 
-  const rateVendor = async () => {
-    let token = await auth.getToken();
-    let id = await auth.getUserID();
-
-    // https://peaceful-citadel-48843.herokuapp.com/business/give/rating/:userID?businessID=617b71fe1debbc001697ee9b&rating=5&orderID=6188f71e7e609f0016a806bb
-    try {
-      const { data } = await axios.get(
-        `https://peaceful-citadel-48843.herokuapp.com/business/give/rating/:userID?businessID=617b71fe1debbc001697ee9b&rating=5&orderID=6188f71e7e609f0016a806bb`,
-        {
-          headers: { Authorization: "Bearer " + token },
-        }
-      );
-      console.log(data);
-      setOrders(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const triggerCall = () => {
     if (userPhone) {
       Linking.openURL(`tel:${userPhone}`);
@@ -146,103 +126,13 @@ function RiderHome({ navigation }) {
     Linking.openURL(`tel: ${ph}`);
   };
 
+
   return (
     <ImageBackground
       source={require("../../assets/images/primary_bg_fill.png")}
       resizeMode="cover"
       style={styles.bgImage}
     >
-      <Modal
-        animationType="slide"
-        // transparent={true}
-        fullScreen={true}
-        visible={ratingModalVisible}
-        onRequestClose={() => {
-          setModalVisible(!ratingModalVisible);
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "white",
-            padding: 50,
-            margin: 0,
-          }}
-        >
-          <View
-            style={{
-              marginTop: 50,
-              alignItems: "center",
-            }}
-          >
-            <Image
-              source={require("../../assets/images/review_us_icon.png")}
-              style={{
-                height: 202,
-                width: 270,
-              }}
-            />
-          </View>
-          <Text
-            style={{
-              marginTop: 20,
-              fontSize: 25,
-              textAlign: "center",
-              paddingLeft: 10,
-              paddingRight: 10,
-            }}
-          >
-            Rate your experience with the vendor!
-          </Text>
-          <View
-            style={{
-              marginTop: 20,
-            }}
-          >
-            <Rating
-              type="star"
-              ratingCount={5}
-              imageSize={40}
-              onFinishRating={(value) => setRating(value)}
-              startingValue={rating}
-              showRating={true}
-              fractions={1}
-            />
-            <View
-              style={{
-                height: 40,
-              }}
-            ></View>
-            <Button
-              style={
-                {
-                  // paddingTop: 50,
-                  // paddingBottom: 30,
-                }
-              }
-              title="Submit Your Review"
-              onPress={async () => {
-                await rateVendor();
-                setRating(0);
-                setRatingModalVisible(!ratingModalVisible);
-              }}
-              buttonStyle={{ backgroundColor: "#179bd7", borderRadius: 10 }}
-            />
-          </View>
-          {/* <TouchableOpacity style={{
-                        position: 'absolute',
-                        bottom: 20,
-                        width: '100%',
-                        marginRight: 20,
-                        marginLeft: 20,
-                        backgroundColor: 'red',
-                    }}>
-                        <Text style={{}}>
-                            asdf
-                        </Text>
-                    </TouchableOpacity> */}
-        </View>
-      </Modal>
 
       {userInfo != null && (
         <Modal
@@ -542,7 +432,7 @@ function RiderHome({ navigation }) {
                   fontWeight: "bold",
                 }}
               >
-                530.00 BDT
+                {totalAmount} BDT
               </Text>
               <View
                 style={{
