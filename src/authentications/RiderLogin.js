@@ -6,7 +6,7 @@ import axios from "axios";
 import auth from '../auth';
 
 export default function RiderLogin({navigation}) {
-    const { control, handleSubmit, formState: { errors } } = useForm();
+    const { control, handleSubmit, formState: { errors }, reset } = useForm();
     const onSubmit = async ({firstName:email, password}) => {
         try{
             const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
@@ -16,13 +16,13 @@ export default function RiderLogin({navigation}) {
                 await auth.setUserID(JSON.stringify(data.user._id));
                 await auth.setStatus(JSON.stringify(data.user.status));
 
+                reset();
+
                 if(data.user.status === "true"){
                     navigation.navigate("TabController");
                 }else{
                     navigation.navigate("WaitingPage");
                 }
-                
-                
             }
         }catch(err){
             console.log(err);

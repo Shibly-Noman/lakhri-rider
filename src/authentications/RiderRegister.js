@@ -13,6 +13,7 @@ import {
   Button,
   Alert,
   ScrollView,
+  ToastAndroid,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
@@ -20,6 +21,11 @@ import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 
 export default function RiderRegister({ navigation }) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [modalVisible, setModalVisible] = useState(false);
 
   const [userImage, setUserImage] = useState(null);
@@ -27,11 +33,6 @@ export default function RiderRegister({ navigation }) {
   const [dLicenceImage, setDLicenceImage] = useState(null);
   const [bLicenceImage, setBLicenceImage] = useState(null);
   const [vehicleType, setVehicleType] = useState(null);
-
-  const [userImageURL, setUserImageURL] = useState(null);
-  const [nidImageURL, setNidImageUrl] = useState(null);
-  const [dLicenceImageURL, setDLicenceImageURL] = useState(null);
-  const [bLicenceImageURL, setBLicenceImageURL] = useState(null);
   const [submitButtonText, setSubmitButtonText] = useState("SUBMIT");
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function RiderRegister({ navigation }) {
     })();
   }, []);
 
-  pickImage = async (imageSetter, imageURLSetter) => {
+  const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: false,
       aspect: [4, 3],
@@ -54,53 +55,53 @@ export default function RiderRegister({ navigation }) {
     });
 
     if (!result.cancelled) {
-      imageSetter(result.uri);
-
-      let base64Img = `data:image/jpg;base64,${result.base64}`;
-
-      //Add your cloud name
-      let apiUrl = "https://api.cloudinary.com/v1_1/lakhrifood/image/upload";
-
-      let data = {
-        file: base64Img,
-        upload_preset: "ml_default",
-      };
-
-      fetch(apiUrl, {
-        body: JSON.stringify(data),
-        headers: {
-          "content-type": "application/json",
-        },
-        method: "POST",
-      })
-        .then(async (r) => {
-          let data = await r.json();
-          imageURLSetter(data.secure_url);
-        })
-        .catch((err) => console.log(err));
+      return result;
     }
   };
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const postImageToCloud = async (image) => {
+    let base64Img = `data:image/jpg;base64,${image.base64}`;
+
+    //Add your cloud name
+    let apiUrl = "https://api.cloudinary.com/v1_1/lakhrifood/image/upload";
+
+    let data = {
+      file: base64Img,
+      upload_preset: "ml_default",
+    };
+
+    const res = await axios.post(apiUrl, data);
+    return res.data.secure_url;
+  };
+
   const onSubmit = async (data) => {
+    setSubmitButtonText("Uploading Files...");
+
     const payload = {
       ...data,
-      imgURL: userImageURL,
-      drivingLicenceImgURL: dLicenceImageURL,
-      carPaper: bLicenceImageURL,
-      nidImgURL: nidImageURL,
+      vehicleType,
+      imgURL: await postImageToCloud(userImage),
+      drivingLicenceImgURL: await postImageToCloud(dLicenceImage),
+      carPaper: await postImageToCloud(bLicenceImage),
+      nidImgURL: await postImageToCloud(nidImage),
     };
+
+    console.log(payload);
 
     const res = await axios.post(
       "https://peaceful-citadel-48843.herokuapp.com/auth/rider/signup",
       payload
     );
+    setSubmitButtonText("Submit");
+    console.log(res.data);
 
-    setModalVisible(false);
+    if (res.data.errors) {
+      ToastAndroid.show("Registration Failed!", ToastAndroid.SHORT);
+      
+    } else {
+      ToastAndroid.show("Registration Successful!", ToastAndroid.SHORT);
+      navigation.navigate("RiderLogin");
+    }
   };
   return (
     <ImageBackground
@@ -112,11 +113,9 @@ export default function RiderRegister({ navigation }) {
         <Text style={styles.primaryTitle}>
           Welcome! We'd like to know about you
         </Text>
-        {/* <Text style={styles.primarySubTitle}>Hello there</Text> */}
-        {/* <Text style={styles.primarySubTitle}>Create account now.</Text> */}
       </View>
       <TouchableOpacity
-        onPress={() => pickImage(setUserImage, setUserImageURL)}
+        onPress={async () => setUserImage(await pickImage())}
         style={{
           marginLeft: 20,
           backgroundColor: "#fff",
@@ -139,7 +138,7 @@ export default function RiderRegister({ navigation }) {
         )}
         {userImage && (
           <Image
-            source={{ uri: userImage }}
+            source={{ uri: userImage.uri }}
             style={{ width: 60, height: 60, borderRadius: 30 }}
           />
         )}
@@ -163,10 +162,10 @@ export default function RiderRegister({ navigation }) {
                 />
               </View>
             )}
-            name="fullName"
+            name="name"
             defaultValue=""
           />
-          {errors.fullName && (
+          {errors.name && (
             <Text
               style={{
                 color: "#F00",
@@ -367,7 +366,7 @@ export default function RiderRegister({ navigation }) {
           )}
 
           <TouchableOpacity
-            onPress={() => pickImage(setNidImage, setNidImageUrl)}
+            onPress={async () => setNidImage(await pickImage())}
             style={{
               backgroundColor: "#fff",
               alignContent: "center",
@@ -405,7 +404,7 @@ export default function RiderRegister({ navigation }) {
             )}
             {nidImage && (
               <Image
-                source={{ uri: nidImage }}
+                source={{ uri: nidImage.uri }}
                 style={{ width: 100, height: 100, borderRadius: 10 }}
               />
             )}
@@ -420,7 +419,7 @@ export default function RiderRegister({ navigation }) {
               }}
             >
               <TouchableOpacity
-                onPress={() => pickImage(setDLicenceImage, setDLicenceImageURL)}
+                onPress={async () => setDLicenceImage(await pickImage())}
                 style={{
                   backgroundColor: "#fff",
                   alignContent: "center",
@@ -458,14 +457,14 @@ export default function RiderRegister({ navigation }) {
                 )}
                 {dLicenceImage && (
                   <Image
-                    source={{ uri: dLicenceImage }}
+                    source={{ uri: dLicenceImage.uri }}
                     style={{ width: 100, height: 100, borderRadius: 10 }}
                   />
                 )}
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => pickImage(setBLicenceImage, setBLicenceImageURL)}
+                onPress={async () => setBLicenceImage(await pickImage())}
                 style={{
                   backgroundColor: "#fff",
                   alignContent: "center",
@@ -503,7 +502,7 @@ export default function RiderRegister({ navigation }) {
                 )}
                 {bLicenceImage && (
                   <Image
-                    source={{ uri: bLicenceImage }}
+                    source={{ uri: bLicenceImage.uri }}
                     style={{ width: 100, height: 100, borderRadius: 10 }}
                   />
                 )}
@@ -518,25 +517,12 @@ export default function RiderRegister({ navigation }) {
           ></View>
         </ScrollView>
 
-        {/* 
-                <View style={styles.inputWrapper}>
-                    <Text style={styles.secoundaryColorText}>Forgot Password</Text>
-                </View> */}
-
-        {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit(onSubmit)} /> */}
         <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           style={styles.appButtonContainer}
         >
           <Text style={styles.appButtonText}>{submitButtonText}</Text>
         </TouchableOpacity>
-
-        {/* <View style={{ display: "flex", flexDirection: "row" }}>
-                    <Text>Already have an account? </Text>
-                    <Text style={{
-                        color: "#02adfb"
-                    }}>Log in</Text>
-                </View> */}
       </View>
     </ImageBackground>
   );

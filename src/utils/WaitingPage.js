@@ -34,7 +34,7 @@ export default function ResetPassword({ navigation }) {
         </Text>
         {/* Remove the parent touchbale opacity tag, or just the method, this is only for Success Testing */}
         <TouchableOpacity
-          onPress={() => navigation.navigate("VerificationSuccess")}
+          onPress={() => navigation.navigate("RiderLogin")}
         >
           <Text>
             <Text style={styles.messageSmallColor}> Back to log in page</Text>
