@@ -158,9 +158,9 @@ export default function Wallet({ navigation }) {
                     </View>
                   </View>
                   <View style={styles.textAndAmount}>
-                    <Text style={styles.upAmount}>{item.amountOfPaid}</Text>
+                    <Text style={styles.upAmount}>{item.amountOfUnpaid}</Text>
                     <Text style={styles.upAmountZero}>
-                      {item.amountOfUnpaid}
+                      {item.amountOfPaid}
                     </Text>
                   </View>
                 </View>

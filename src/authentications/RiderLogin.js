@@ -7,7 +7,7 @@ import auth from '../auth';
 
 export default function RiderLogin({navigation}) {
     const { control, handleSubmit, formState: { errors }, reset } = useForm();
-    const onSubmit = async ({firstName:email, password}) => {
+    const onSubmit = async ({email, password}) => {
         try{
             const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
             
@@ -53,10 +53,10 @@ export default function RiderLogin({navigation}) {
                             />
                         </View>
                     )}
-                    name="firstName"
-                    defaultValue=""
+                    name="email"
+                    defaultValue="wwwww@test.com"
                 />
-                {errors.firstName && <Text style={{
+                {errors.email && <Text style={{
                     color: "#F00"
                 }}>Email is required.</Text>}
                 <Controller
@@ -78,7 +78,7 @@ export default function RiderLogin({navigation}) {
                         </View>
                     )}
                     name="password"
-                    defaultValue=""
+                    defaultValue="123456"
                 />
                 {errors.password && <Text style={{
                     color: "#F00"
