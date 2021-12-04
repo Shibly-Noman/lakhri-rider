@@ -28,7 +28,7 @@ function RiderHome() {
     setRefreshing(false);
   }, []);
 
-  const getOrders = async ()=>{
+  const getOrders = async () => {
     const id = await auth.getUserID();
     const headers = await auth.getHeaders();
     const { data } = await axios.get(
@@ -36,7 +36,7 @@ function RiderHome() {
       headers
     );
     setOrders(data);
-  }
+  };
 
   const handleOrderCompletion = async (orderId) => {
     const headers = await auth.getHeaders();
@@ -56,80 +56,84 @@ function RiderHome() {
       resizeMode="cover"
       style={styles.bgImage}
     >
-      {orders.length > 0 ? (
-        <View
+      <View
+        style={{
+          flex: 1,
+          paddingLeft: 20,
+          paddingRight: 20,
+          paddingTop: 50,
+        }}
+      >
+        <Text
           style={{
-            flex: 1,
-            paddingLeft: 20,
-            paddingRight: 20,
-            paddingTop: 50,
+            marginTop: 10,
+            fontSize: 25,
+            color: "white",
           }}
         >
-          <Text
-            style={{
-              marginTop: 10,
-              fontSize: 25,
-              color: "white",
-            }}
-          >
-            Welcome Mr. Nafis
-          </Text>
-          <Text
-            style={{
-              marginTop: 10,
-              fontSize: 15,
-              marginBottom: 10,
-              color: "white",
-            }}
-          >
-            Here is the delivery list for you
-          </Text>
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            showsVerticalScrollIndicator={false}
-          >
-            {orders.map((order) => (
-              <OrderCard key={order._id} order={order} onComplete={handleOrderCompletion} />
-            ))}
-          </ScrollView>
-        </View>
-      ) : (
-        <View
+          Welcome Mr. Nafis
+        </Text>
+        <Text
           style={{
-            justifyContent: "center",
-            alignItems: "center",
+            marginTop: 10,
+            fontSize: 15,
+            marginBottom: 10,
+            color: "white",
           }}
         >
-          <Image
-            source={require("../../assets/images/empty_folder.png")}
-            resizeMode="contain"
-            style={{
-              height: 250,
-              width: 250,
-            }}
-          />
+          Here is the delivery list for you
+        </Text>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false}
+        >
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <OrderCard
+                key={order._id}
+                order={order}
+                onComplete={handleOrderCompletion}
+              />
+            ))
+          ) : (
+            <View
+              style={{
+                alignItems: "center",
+                marginTop: "45%"
+              }}
+            >
+              <Image
+                source={require("../../assets/images/empty_folder.png")}
+                resizeMode="contain"
+                style={{
+                  height: 250,
+                  width: 250,
+                }}
+              />
 
-          <Text
-            style={{
-              fontSize: 22,
-              color: "#000000",
-            }}
-          >
-            Sorry!
-          </Text>
+              <Text
+                style={{
+                  fontSize: 22,
+                  color: "#000000",
+                }}
+              >
+                Sorry!
+              </Text>
 
-          <Text
-            style={{
-              fontSize: 22,
-              color: "#000000",
-            }}
-          >
-            You have no order yet.
-          </Text>
-        </View>
-      )}
+              <Text
+                style={{
+                  fontSize: 22,
+                  color: "#000000",
+                }}
+              >
+                You have no order yet.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </View>
     </ImageBackground>
   );
 }
