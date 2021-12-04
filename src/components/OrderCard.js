@@ -27,24 +27,16 @@ export default function Order({ order, onComplete }) {
   const handleProductCompletion = async (product) => {
     let token = await auth.getToken();
 
-    const body = {
-      orderStatus: "delivered",
-      _id: product._id,
-      productId: product.productId._id,
-      price: product.price,
-      vendorID: product.vendorID._id,
-      quantity: product.quantity,
-      discount: product.discount,
-      productType: product.productType,
-    };
     try {
       const { data } = await axios.patch(
         `https://peaceful-citadel-48843.herokuapp.com/payment/status/update/by?id=${order._id}&productInfoid=${product._id}`,
-        body,
+        {orderStatus: "delivered"},
         {
           headers: { Authorization: "Bearer " + token },
         }
       );
+
+      console.log("logging\n\n\n\n", data);
 
       setProducts(data.productInfo);
     } catch (err) {

@@ -8,8 +8,6 @@ import axios from "axios";
 
 export default function Product({product, onComplete}) {
 
-  console.log(product);
-  return(<View></View>)
   const triggerCall = (phone) => {
     Linking.openURL(`tel:${phone}`);
   };
