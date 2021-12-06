@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useState} from "react"
 import {
   Text,
   View,
@@ -7,31 +8,38 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
-  ToastAndroid
+  ToastAndroid,
+  RefreshControl
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import auth from "../auth"
+import {useAuth} from "../contexts/AuthContext";
+import * as SecureStore from "expo-secure-store";
 
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import axios from "axios";
 
 export default function RiderProfile({navigation}) {
-  const [user, setUser] = React.useState(null);
-  const [wallet, setWallet] = React.useState(null);
-  const [cashReceived, setCashReceived] = React.useState(null);
-  const [dailyTarget, setDailyTarget] = React.useState(null);
-  const [monthlyTarget, setMonthlyTarget] = React.useState(null);
-  const [deps, setDeps] = React.useState(Math.random());
+  const {user, setUser, requestHeader} = useAuth();
+  const [userProfile, setUserProfile] = useState(null);
+  const [wallet, setWallet] = useState(0);
+  const [cashReceived, setCashReceived] = useState(0);
+  const [dailyTarget, setDailyTarget] = useState(0);
+  const [monthlyTarget, setMonthlyTarget] = useState(0);
+  const [deps, setDeps] = useState(Math.random());
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [isLoading, setIsLoading] = React.useState(true);
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  }, []);
 
   const logout = async () => {
-    await auth.logout(()=>{
-      navigation.navigate('introStepper');
-    });
-    
+    await SecureStore.deleteItemAsync("userData");
+    setUser(null);
+    navigation.navigate("RiderLogin");
   }
 
   const showToast = (message) => {
@@ -40,51 +48,48 @@ export default function RiderProfile({navigation}) {
 
   const handleWithdraw = async ()=>{
     const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
-    const userID = await auth.getUserID();
-    const headers = await auth.getHeaders();
 
     if(wallet.pendingAmount < 1000){
       showToast("Amount must be minimum 1000");
       return;
     }
 
-    await axios.patch(`${baseURL}/payment/make-withdraw/${userID}`, {}, headers)
+    await axios.patch(`${baseURL}/payment/make-withdraw/${user.id}`, {}, requestHeader)
     showToast("Withdraw request successful!")
     setDeps(Math.random())
   }
 
-  React.useEffect(async () => {
+  const getData = async () => {
     try {
-      const userID = await auth.getUserID();
-      const token = await auth.getToken();
       const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
       axios
-        .get(`${baseURL}/auth/rider/${userID}`, config)
-        .then((res) => setUser(res.data));
+        .get(`${baseURL}/auth/rider/${user.id}`, requestHeader)
+        .then((res) => setUserProfile(res.data));
       axios
         .get(
-          `${baseURL}/payment/rider-payments/${userID}/deposited`,
-          config
+          `${baseURL}/payment/rider-payments/${user.id}/deposited`,
+          requestHeader
         )
         .then((res) => setWallet(res.data));
       axios
         .get(
-          `${baseURL}/payment/rider-payments/${userID}/pending`,
-          config
+          `${baseURL}/payment/rider-payments/${user.id}/pending`,
+          requestHeader
         )
         .then((res) => setCashReceived(res.data));
       axios
-        .get(`${baseURL}/auth/rider/daily/${userID}`, config)
+        .get(`${baseURL}/auth/rider/daily/${user.id}`, requestHeader)
         .then((res) => setDailyTarget(res.data));
       axios
-        .get(`${baseURL}/auth/rider/monthly/${userID}`, config)
+        .get(`${baseURL}/auth/rider/monthly/${user.id}`, requestHeader)
         .then((res) => setMonthlyTarget(res.data));
     } catch (err) {
       console.log(err);
     }
+  }
+
+  React.useEffect(async () => {
+    await getData();
   }, [deps]);
 
   return (
@@ -100,7 +105,6 @@ export default function RiderProfile({navigation}) {
           padding: 22,
         }}
       >
-        {user && (
           <View
             style={{
               display: "flex",
@@ -109,7 +113,7 @@ export default function RiderProfile({navigation}) {
             }}
           >
             <Image
-              source={{ uri: user.imgURL }}
+              source={userProfile ? { uri: userProfile.imgURL} : require("../../assets/images/profile.jpeg")}
               style={{
                 height: 90,
                 width: 90,
@@ -131,7 +135,7 @@ export default function RiderProfile({navigation}) {
                   fontWeight: "bold",
                 }}
               >
-                {user.name}
+                {userProfile ? userProfile.name : ""}
               </Text>
               <Text
                 style={{
@@ -139,7 +143,7 @@ export default function RiderProfile({navigation}) {
                   color: "#fff",
                 }}
               >
-                {user.phoneNumber}
+                {userProfile ? userProfile.phoneNumber: ""}
               </Text>
 
               <TouchableOpacity style={{
@@ -167,14 +171,15 @@ export default function RiderProfile({navigation}) {
 
             </View>
           </View>
-        )}
 
         <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
           style={{
             paddingTop: 10,
           }}
         >
-          {wallet && (
             <View
               style={{
                 padding: 15,
@@ -227,9 +232,7 @@ export default function RiderProfile({navigation}) {
                 </TouchableOpacity>
               </View>
             </View>
-          )}
 
-          {cashReceived && (
             <View
               style={{
                 padding: 15,
@@ -259,9 +262,7 @@ export default function RiderProfile({navigation}) {
                 </Text>
               </View>
             </View>
-          )}
 
-          {dailyTarget && (
             <View
               style={{
                 padding: 10,
@@ -323,9 +324,7 @@ export default function RiderProfile({navigation}) {
                 </Text>
               </View>
             </View>
-          )}
 
-          {monthlyTarget && (
             <View
               style={{
                 padding: 10,
@@ -387,7 +386,6 @@ export default function RiderProfile({navigation}) {
                 </Text>
               </View>
             </View>
-          )}
         </ScrollView>
       </View>
     </ImageBackground>

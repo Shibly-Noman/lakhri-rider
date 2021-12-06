@@ -8,25 +8,21 @@ import * as SecureStore from 'expo-secure-store';
 export default function ForgotPasswordMailView({navigation}) {
     const { control, handleSubmit, formState: { errors } } = useForm();
     const onSubmit = async ({email}) => {
-       console.log(email);
-       if(email){
-           navigation.navigate('CheckMail');
-       }
+        const res = await axios.patch(`https://peaceful-citadel-48843.herokuapp.com/auth/rider/forgot/password?email=${email}`);
+        if(!res.errors){
+            navigation.navigate('CheckMail', {email});
+        }
     }
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
             <View style={styles.titleSectionProperties}>
                 <Text style={styles.primaryTitle}>Reset Password</Text>
-                {/* <Text style={styles.message}>Enter the Email associate with your account. We'll send the instruction to reset your password</Text> */}
-                {/* <Text style={styles.message}></Text> */}
-                {/* <Text style={styles.primarySubTitle}>Hello there</Text> */}
-                {/* <Text style={styles.primarySubTitle}>Create account now.</Text> */}
             </View>
             
             
             <View style={styles.container}>
             
-                <Text style={styles.message}>Enter the Email associate with your account. We'll send the instruction to reset your password.</Text>
+                <Text style={styles.message}>Enter the Email associate with your account. We'll send the OTP to reset your password.</Text>
                 
                 <Controller
                     control={control}
@@ -35,7 +31,6 @@ export default function ForgotPasswordMailView({navigation}) {
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <View style={styles.inputWrapper}>
-                            {/* <Text style={styles.inputLable}>Username Or Mail</Text> */}
                             <TextInput
                                 style={styles.input}
                                 onBlur={onBlur}
@@ -52,7 +47,7 @@ export default function ForgotPasswordMailView({navigation}) {
                 }}>Email is required.</Text>}
                 
                 <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
-                    <Text style={styles.appButtonText}>Send Instruction</Text>
+                    <Text style={styles.appButtonText}>Send OTP</Text>
                 </TouchableOpacity>
                 
                 

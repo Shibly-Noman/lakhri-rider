@@ -1,9 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
 import { View, Text, TouchableOpacity, Linking } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import auth from "../auth"
-import axios from "axios";
 
 
 export default function Product({product, onComplete}) {

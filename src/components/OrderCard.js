@@ -4,12 +4,13 @@ import { View, Text, Image, Modal, StyleSheet, Linking, TouchableOpacity, Scroll
 import { Button } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import ProductCard from "../components/ProductCard"
-import auth from "../auth"
+import {useAuth} from "../contexts/AuthContext"
 import axios from "axios";
 
 export default function Order({ order, onComplete }) {
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [products, setProducts] = useState(order.productInfo);
+  const {user, requestHeader} = useAuth();
 
   const showOrderDetails = () => {
     setShowOrderDetailsModal(true);
@@ -21,22 +22,16 @@ export default function Order({ order, onComplete }) {
 
   const handleOrderCompletion = async () => {
     await onComplete(order._id);
-    setShowOrderDetailsModal(false);
+    // setShowOrderDetailsModal(false);
   }
 
   const handleProductCompletion = async (product) => {
-    let token = await auth.getToken();
-
     try {
       const { data } = await axios.patch(
         `https://peaceful-citadel-48843.herokuapp.com/payment/status/update/by?id=${order._id}&productInfoid=${product._id}`,
         {orderStatus: "delivered"},
-        {
-          headers: { Authorization: "Bearer " + token },
-        }
+        requestHeader
       );
-
-      console.log("logging\n\n\n\n", data);
 
       setProducts(data.productInfo);
     } catch (err) {
