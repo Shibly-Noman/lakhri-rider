@@ -1,20 +1,37 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
-import auth from '../auth';
+import * as SecureStore from "expo-secure-store"
+import { useAuth } from '../contexts/AuthContext';
 
 export default function RiderLogin({navigation}) {
     const { control, handleSubmit, formState: { errors }, reset } = useForm();
+    const {setUser} = useAuth();
+    const [wrongCred, setWrongCred] = useState(false);
+
+
     const onSubmit = async ({email, password}) => {
+        setWrongCred(false);
         try{
             const {data} = await axios.post("https://peaceful-citadel-48843.herokuapp.com/auth/rider/signin", { email, password });
             
+            if(data.error){
+                return setWrongCred(true);
+            }
+            
             if(data.token){
-                await auth.setToken(JSON.stringify(data.token))
-                await auth.setUserID(JSON.stringify(data.user._id));
-                await auth.setStatus(JSON.stringify(data.user.status));
+                const user = {
+                    id: data.user._id,
+                    name: data.user.name,
+                    email: data.user.email,
+                    status: data.user.status,
+                    token: data.token
+                };
+
+                await SecureStore.setItemAsync("userData", JSON.stringify(user));
+                setUser(user);
 
                 reset();
 
@@ -54,7 +71,7 @@ export default function RiderLogin({navigation}) {
                         </View>
                     )}
                     name="email"
-                    defaultValue="wwwww@test.com"
+                    defaultValue=""
                 />
                 {errors.email && <Text style={{
                     color: "#F00"
@@ -78,16 +95,15 @@ export default function RiderLogin({navigation}) {
                         </View>
                     )}
                     name="password"
-                    defaultValue="123456"
+                    defaultValue=""
                 />
                 {errors.password && <Text style={{
                     color: "#F00"
                 }}>Password is required.</Text>}
-                {/* <View style={styles.inputWrapper}>
-                    <Text style={styles.secoundaryColorText}>Forgot Password</Text>
-                </View> */}
-                {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit(onSubmit)} /> */}
-                <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
+                {wrongCred && <Text style={{
+                    color: "#F00"
+                }}>Username and password doesn't match.</Text>}
+               <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.appButtonContainer}>
                     <Text style={styles.appButtonText}>Sign In</Text>
                 </TouchableOpacity>
                 <View style={{ display: "flex", flexDirection: "row" }}>

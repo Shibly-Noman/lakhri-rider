@@ -1,27 +1,29 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { StyleSheet, ScrollView, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
+import { ToastAndroid, StyleSheet, ScrollView, TextInput, TouchableOpacity, ImageBackground, Text, Image, View, Dimensions, Button, Alert } from 'react-native';
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 
-export default function ResetPassword({navigation}) {
+export default function ResetPassword({navigation, route}) {
+    const {email, otp} = route.params;
+    const [passMatchError, setPassMatchError] = React.useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
+    
     const onSubmit = async ({password, rePassword}) => {
-       console.log(password, rePassword);
+       if(password !== rePassword) return setPassMatchError(true); 
        
-    //    if(email){
-    //        navigation.navigate('CheckMail');
-    //    }
+       const {data} = await axios.patch(`https://peaceful-citadel-48843.herokuapp.com/auth/rider/resetPassword?email=${email}&otp=${otp}&newPassword=${password}`)
+
+       if(!data.error){
+        ToastAndroid.show("Success! Please Login..", ToastAndroid.SHORT)
+        navigation.popToTop();
+       }
     }
     return (
         <ImageBackground source={require('../../assets/images/primary_bg_fill.png')} resizeMode="cover" style={styles.bgImage}>
             <View style={styles.titleSectionProperties}>
                 <Text style={styles.primaryTitle}>Reset Password</Text>
-                {/* <Text style={styles.message}>Enter the Email associate with your account. We'll send the instruction to reset your password</Text> */}
-                {/* <Text style={styles.message}></Text> */}
-                {/* <Text style={styles.primarySubTitle}>Hello there</Text> */}
-                {/* <Text style={styles.primarySubTitle}>Create account now.</Text> */}
             </View>
             
             
@@ -37,7 +39,7 @@ export default function ResetPassword({navigation}) {
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Password</Text>
+                            <Text style={styles.inputLable}>New Password</Text>
                             <TextInput
                                 style={styles.input}
                                 onBlur={onBlur}
@@ -63,7 +65,7 @@ export default function ResetPassword({navigation}) {
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <View style={styles.inputWrapper}>
-                            <Text style={styles.inputLable}>Password</Text>
+                            <Text style={styles.inputLable}>Confirm Password</Text>
                             <TextInput
                                 style={styles.input}
                                 onBlur={onBlur}
@@ -78,21 +80,14 @@ export default function ResetPassword({navigation}) {
                 />
                 {errors.rePassword && <Text style={{
                     color: "#F00"
-                }}>Please Type your password again</Text>}
+                }}>Confirm password is required</Text>}
+                {!errors.password && !errors.rePassword && passMatchError && <Text style={{
+                    color: "#F00"
+                }}>Password doesn't match.</Text>}
 
 
                 
-                <TouchableOpacity 
-                // This route is for waiting page testing Remove it >>
-                    onPress={() => {
-                        navigation.navigate('WaitingPage');
-                    }}
-
-                // << This route is for reset password page testing Remove it
-
-                // this is legit method for reset password
-                    // >> onPress={handleSubmit(onSubmit)} 
-                // This is 
+                <TouchableOpacity  onPress={handleSubmit(onSubmit)}
                 style={styles.appButtonContainer}>
 
                     <Text style={styles.appButtonText}>Reset Password</Text>

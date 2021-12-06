@@ -1,5 +1,6 @@
 import { setStatusBarHidden } from "expo-status-bar";
 import * as React from "react";
+import {useState} from "react"
 import {
   View,
   Text,
@@ -7,32 +8,40 @@ import {
   ScrollView,
   ImageBackground,
   StyleSheet,
+  RefreshControl
 } from "react-native";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+import { useAuth } from "../contexts/AuthContext";
 import { Rating, AirbnbRating } from "react-native-elements";
  
 function RiderLeadershipBoard() {
-  const [data, setData] = React.useState(null);
- 
-  React.useEffect(async () => {
-    const token = await SecureStore.getItemAsync("token");
- 
+  const [data, setData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const {requestHeader} = useAuth();
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  }, []);
+
+  const getData = async () => {
     try {
       const res = await axios.get(
         "https://peaceful-citadel-48843.herokuapp.com/rider/leader-ship-board",
-        {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token)}`,
-          },
-        }
+        requestHeader
       );
       setData(res.data.data);
     } catch (err) {
       console.log(err);
     }
+  }
+ 
+  React.useEffect(async () => {
+ 
+    await getData();
   }, []);
   
   return (
@@ -48,7 +57,9 @@ function RiderLeadershipBoard() {
           marginTop: 30,
         }}
       >
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <View
             style={{
               marginBottom: 20,
@@ -57,14 +68,6 @@ function RiderLeadershipBoard() {
               alignItems: "center",
             }}
           >
-            {/* <Image
-                        source={require('../../../assets/images/hamburger_menu.svg')}
-                        style={{
-                            height: 27,
-                            width: 30,
-                            marginRight: 20
-                        }}
-                    /> */}
             <Text
               style={{
                 fontSize: 25,

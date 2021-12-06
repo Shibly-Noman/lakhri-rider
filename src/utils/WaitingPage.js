@@ -11,7 +11,16 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-export default function ResetPassword({ navigation }) {
+import {useAuth} from "../contexts/AuthContext"
+
+export default function WaitingPage({ navigation }) {
+  const {setUser} = useAuth();
+
+  const backToLogin = async ()=>{
+    setUser(null);
+    await SecureStore.deleteItemAsync("userData");
+  }
+
   return (
     <ImageBackground
       source={require("../../assets/images/primary_bg_fill.png")}
@@ -34,7 +43,7 @@ export default function ResetPassword({ navigation }) {
         </Text>
         {/* Remove the parent touchbale opacity tag, or just the method, this is only for Success Testing */}
         <TouchableOpacity
-          onPress={() => navigation.navigate("RiderLogin")}
+          onPress={backToLogin}
         >
           <Text>
             <Text style={styles.messageSmallColor}> Back to log in page</Text>

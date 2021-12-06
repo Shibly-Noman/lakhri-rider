@@ -15,15 +15,39 @@ import {
   Platform,
   ScrollView,
   Touchable,
+  RefreshControl
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
-import auth from "../auth";
+import {useAuth} from "../contexts/AuthContext";
 
 export default function Wallet({ navigation }) {
   const [pendingAmount, setPendingAmount] = useState(0);
   const [paymentHistory, setPaymentHistory] = useState(null);
+  const {user, requestHeader} = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  }, []);
+
+  const getData = async () => {
+    const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
+
+    let res;
+
+    res = await axios.get(
+      `${baseURL}/payment/rider-payments/${user.id}/deposited`,
+      requestHeader
+    );
+    setPendingAmount(res.data.pendingAmount);
+
+    res = await axios.get(`${baseURL}/payment/rider/history/${user.id}`, requestHeader);
+    setPaymentHistory(res.data);
+  }
 
   const showToast = (message) => {
     ToastAndroid.show(message, ToastAndroid.SHORT);
@@ -31,8 +55,6 @@ export default function Wallet({ navigation }) {
 
   const handleWithdraw = async () => {
     const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
-    const userID = await auth.getUserID();
-    const headers = await auth.getHeaders();
 
     if (pendingAmount < 1000) {
       showToast("Amount must be minimum 1000");
@@ -40,33 +62,24 @@ export default function Wallet({ navigation }) {
     }
 
     await axios.patch(
-      `${baseURL}/payment/make-withdraw/${userID}`,
+      `${baseURL}/payment/make-withdraw/${user.id}`,
       {},
-      headers
+      requestHeader
     );
     showToast("Withdraw request successful!");
     setDeps(Math.random());
   };
 
   useEffect(async () => {
-    const headers = await auth.getHeaders();
-    const id = await auth.getUserID();
-    const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
-
-    let res;
-
-    res = await axios.get(
-      `${baseURL}/payment/rider-payments/${id}/deposited`,
-      headers
-    );
-    setPendingAmount(res.data.pendingAmount);
-
-    res = await axios.get(`${baseURL}/payment/rider/history/${id}`, headers);
-    setPaymentHistory(res.data);
+    await getData();
   }, []);
 
   return (
-    <ScrollView>
+    <ScrollView
+    refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    }
+    >
       <View style={styles.container}>
         {/* <View style={styles.topBar}>
                     <TouchableOpacity>

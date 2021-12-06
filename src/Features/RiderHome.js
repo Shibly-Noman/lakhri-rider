@@ -7,15 +7,16 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
-  RefreshControl,
+  RefreshControl
 } from "react-native";
 import axios from "axios";
-import auth from "../auth";
 import OrderCard from "../components/OrderCard";
+import {useAuth} from "../contexts/AuthContext";
 
 function RiderHome() {
-  const [orders, setOrders] = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [orders, setOrders] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const {user, requestHeader} = useAuth();
 
   // Prior check for security
   React.useEffect(async () => {
@@ -29,22 +30,18 @@ function RiderHome() {
   }, []);
 
   const getOrders = async () => {
-    const id = await auth.getUserID();
-    const headers = await auth.getHeaders();
     const { data } = await axios.get(
-      `https://peaceful-citadel-48843.herokuapp.com/order/rider/all/${id}`,
-      headers
+      `https://peaceful-citadel-48843.herokuapp.com/order/rider/all/${user.id}`,
+      requestHeader
     );
     setOrders(data);
   };
 
   const handleOrderCompletion = async (orderId) => {
-    const headers = await auth.getHeaders();
-
     const res = await axios.patch(
       `https://peaceful-citadel-48843.herokuapp.com/payment/rider-payment-and-order-complete/${orderId}`,
       {},
-      headers
+      requestHeader
     );
 
     await getOrders();

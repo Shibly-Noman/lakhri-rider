@@ -24,6 +24,7 @@ export default function RiderRegister({ navigation }) {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
   const [modalVisible, setModalVisible] = useState(false);
@@ -75,15 +76,32 @@ export default function RiderRegister({ navigation }) {
   };
 
   const onSubmit = async (data) => {
+    if(!userImage){
+      return ToastAndroid.show("Please select your profile image.", ToastAndroid.SHORT);
+    }
+    if(!nidImage){
+      return ToastAndroid.show("Please select your NID image.", ToastAndroid.SHORT);
+    }
+
+    if(vehicleType === 'motorcycle'){
+      if(!dLicenceImage){
+        return ToastAndroid.show("Please select your Driving License image.", ToastAndroid.SHORT);
+      }
+      if(!bLicenceImage){
+        return ToastAndroid.show("Please select your Car Paper image.", ToastAndroid.SHORT);
+      }
+    }
+
+    
     setSubmitButtonText("Uploading Files...");
 
     const payload = {
       ...data,
       vehicleType,
-      imgURL: await postImageToCloud(userImage),
-      drivingLicenceImgURL: await postImageToCloud(dLicenceImage),
-      carPaper: await postImageToCloud(bLicenceImage),
-      nidImgURL: await postImageToCloud(nidImage),
+      imgURL: userImage ? await postImageToCloud(userImage) : null,
+      drivingLicenceImgURL: dLicenceImage ?  await postImageToCloud(dLicenceImage) : null,
+      carPaper: bLicenceImage ? await postImageToCloud(bLicenceImage) : null,
+      nidImgURL: nidImage ? await postImageToCloud(nidImage) : null,
     };
 
     console.log(payload);
@@ -93,7 +111,11 @@ export default function RiderRegister({ navigation }) {
       payload
     );
     setSubmitButtonText("Submit");
-    console.log(res.data);
+    reset();
+    setUserImage(null);
+    setBLicenceImage(null)
+    setDLicenceImage(null)
+    setNidImage(null)
 
     if (res.data.errors) {
       ToastAndroid.show("Registration Failed!", ToastAndroid.SHORT);
