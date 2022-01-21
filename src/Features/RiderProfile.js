@@ -1,27 +1,23 @@
-import * as React from "react";
-import {useState} from "react"
-import {
-  Text,
-  View,
-  Image,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
-  ScrollView,
-  ToastAndroid,
-  RefreshControl
-} from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import {useAuth} from "../contexts/AuthContext";
-import * as SecureStore from "expo-secure-store";
-
-import { AnimatedCircularProgress } from "react-native-circular-progress";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import * as React from "react";
+import { useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { useAuth } from "../contexts/AuthContext";
 
-export default function RiderProfile({navigation}) {
-  const {user, setUser, requestHeader} = useAuth();
+export default function RiderProfile({ navigation }) {
+  const { user, setUser, requestHeader } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
   const [wallet, setWallet] = useState(0);
   const [cashReceived, setCashReceived] = useState(0);
@@ -40,24 +36,28 @@ export default function RiderProfile({navigation}) {
     await SecureStore.deleteItemAsync("userData");
     setUser(null);
     navigation.navigate("RiderLogin");
-  }
+  };
 
   const showToast = (message) => {
     ToastAndroid.show(message, ToastAndroid.SHORT);
   };
 
-  const handleWithdraw = async ()=>{
+  const handleWithdraw = async () => {
     const baseURL = "https://peaceful-citadel-48843.herokuapp.com";
 
-    if(wallet.pendingAmount < 1000){
+    if (wallet.pendingAmount < 1000) {
       showToast("Amount must be minimum 1000");
       return;
     }
 
-    await axios.patch(`${baseURL}/payment/make-withdraw/${user.id}`, {}, requestHeader)
-    showToast("Withdraw request successful!")
-    setDeps(Math.random())
-  }
+    await axios.patch(
+      `${baseURL}/payment/make-withdraw/${user.id}`,
+      {},
+      requestHeader
+    );
+    showToast("Withdraw request successful!");
+    setDeps(Math.random());
+  };
 
   const getData = async () => {
     try {
@@ -86,10 +86,11 @@ export default function RiderProfile({navigation}) {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   React.useEffect(async () => {
     await getData();
+    console.log(wallet);
   }, [deps]);
 
   return (
@@ -105,48 +106,53 @@ export default function RiderProfile({navigation}) {
           padding: 22,
         }}
       >
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginBottom: 72,
+          }}
+        >
+          <Image
+            source={
+              userProfile
+                ? { uri: userProfile.imgURL }
+                : require("../../assets/images/profile.jpeg")
+            }
+            style={{
+              height: 90,
+              width: 90,
+              borderRadius: 25,
+              marginRight: 10,
+              borderWidth: 3,
+              borderColor: "#fff",
+            }}
+          />
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: 72,
+              padding: 10,
             }}
           >
-            <Image
-              source={userProfile ? { uri: userProfile.imgURL} : require("../../assets/images/profile.jpeg")}
+            <Text
               style={{
-                height: 90,
-                width: 90,
-                borderRadius: 25,
-                marginRight: 10,
-                borderWidth: 3,
-                borderColor: "#fff",
-              }}
-            />
-            <View
-              style={{
-                padding: 10,
+                fontSize: 20,
+                color: "#fff",
+                fontWeight: "bold",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: "#fff",
-                  fontWeight: "bold",
-                }}
-              >
-                {userProfile ? userProfile.name : ""}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#fff",
-                }}
-              >
-                {userProfile ? userProfile.phoneNumber: ""}
-              </Text>
+              {userProfile ? userProfile.name : ""}
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                color: "#fff",
+              }}
+            >
+              {userProfile ? userProfile.phoneNumber : ""}
+            </Text>
 
-              <TouchableOpacity style={{
+            <TouchableOpacity
+              style={{
                 marginTop: 10,
                 height: 30,
                 width: 80,
@@ -156,236 +162,248 @@ export default function RiderProfile({navigation}) {
                 alignItems: "center",
                 borderRadius: 8,
               }}
-                onPress={() => {
-                  logout();
+              onPress={() => {
+                logout();
+              }}
+            >
+              <Text
+                style={{
+                  color: "#0da5eb",
                 }}
               >
-                <Text
-                  style={{
-                    color: "#0da5eb",
-                  }}
-                >
-                  Logout
-                </Text>
-              </TouchableOpacity>
-
-            </View>
+                Logout
+              </Text>
+            </TouchableOpacity>
           </View>
+        </View>
 
         <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           style={{
             paddingTop: 10,
           }}
         >
-            <View
-              style={{
-                padding: 15,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#0da5eb",
-                backgroundColor: "#fff",
-                marginBottom: 20,
-              }}
-            >
-              <Text>Wallet</Text>
-
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    paddingTop: 20,
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {wallet.pendingAmount} BDT
-                </Text>
-
-                <TouchableOpacity
-                  style={{
-                    height: 40,
-                    width: 130,
-                    marginTop: 20,
-                    borderRadius: 10,
-                    backgroundColor: "#0da5eb",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 10,
-                  }}
-                  onPress={handleWithdraw}
-                >
-                  <Text
-                    style={{
-                      color: "#fff",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Withdraw
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+          <View
+            style={{
+              padding: 15,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#0da5eb",
+              backgroundColor: "#fff",
+              marginBottom: 20,
+            }}
+          >
+            <Text>Wallet</Text>
 
             <View
               style={{
-                padding: 15,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#0da5eb",
-                backgroundColor: "#fff",
-                marginBottom: 20,
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Text>Cash Received</Text>
-
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    paddingTop: 20,
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {cashReceived.walletAmount} BDT
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={{
-                padding: 10,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#0da5eb",
-                backgroundColor: "#fff",
-                marginBottom: 20,
-              }}
-            >
-              <Text>Daily Target</Text>
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 10,
-                }}
-              >
-                <AnimatedCircularProgress
-                  size={120}
-                  width={15}
-                  fill={(dailyTarget.dailyGoalReached*100) /dailyTarget.dailyGoal}
-                  tintColor="#0da5eb"
-                  onAnimationComplete={() => console.log("onAnimationComplete")}
-                  backgroundColor="#3d5875"
-                />
-              </View>
               <Text
                 style={{
-                  fontSize: 25,
-                  textAlign: "center",
+                  paddingTop: 20,
+                  fontSize: 30,
+                  fontWeight: "bold",
                 }}
               >
-                {((dailyTarget.dailyGoalReached*100) /dailyTarget.dailyGoal).toFixed(2)}%
+                {wallet.pendingAmount} BDT
               </Text>
 
-              <View
+              <TouchableOpacity
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  paddingBottom: 10,
+                  height: 40,
+                  width: 130,
+                  marginTop: 20,
+                  borderRadius: 10,
+                  backgroundColor: "#0da5eb",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 10,
                 }}
+                onPress={handleWithdraw}
               >
                 <Text
                   style={{
-                    fontSize: 16,
+                    color: "#fff",
                     fontWeight: "bold",
                   }}
                 >
-                  Achived: {dailyTarget.dailyGoalReached}
+                  Withdraw
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Target: {dailyTarget.dailyGoal}
-                </Text>
-              </View>
+              </TouchableOpacity>
             </View>
+          </View>
+
+          <View
+            style={{
+              padding: 15,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#0da5eb",
+              backgroundColor: "#fff",
+              marginBottom: 20,
+            }}
+          >
+            <Text>Cash Received</Text>
 
             <View
               style={{
-                padding: 10,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#0da5eb",
-                backgroundColor: "#fff",
-                marginBottom: 20,
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Text>Monthly Target</Text>
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 10,
-                }}
-              >
-                <AnimatedCircularProgress
-                  size={120}
-                  width={15}
-                  fill={(monthlyTarget.monthlyGoalReached*100) /monthlyTarget.monthlyGoal}
-                  tintColor="#0da5eb"
-                  onAnimationComplete={() => console.log("onAnimationComplete")}
-                  backgroundColor="#3d5875"
-                />
-              </View>
               <Text
                 style={{
-                  fontSize: 25,
-                  textAlign: "center",
+                  paddingTop: 20,
+                  fontSize: 30,
+                  fontWeight: "bold",
                 }}
               >
-                {((monthlyTarget.monthlyGoalReached*100) /monthlyTarget.monthlyGoal).toFixed(2)}%
+                {cashReceived.walletAmount} BDT
               </Text>
+            </View>
+          </View>
 
-              <View
+          <View
+            style={{
+              padding: 10,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#0da5eb",
+              backgroundColor: "#fff",
+              marginBottom: 20,
+            }}
+          >
+            <Text>Daily Target</Text>
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 10,
+              }}
+            >
+              <AnimatedCircularProgress
+                size={120}
+                width={15}
+                fill={
+                  (dailyTarget.dailyGoalReached * 100) / dailyTarget.dailyGoal
+                }
+                tintColor="#0da5eb"
+                onAnimationComplete={() => console.log("onAnimationComplete")}
+                backgroundColor="#3d5875"
+              />
+            </View>
+            <Text
+              style={{
+                fontSize: 25,
+                textAlign: "center",
+              }}
+            >
+              {(
+                (dailyTarget.dailyGoalReached * 100) /
+                dailyTarget.dailyGoal
+              ).toFixed(2)}
+              %
+            </Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingBottom: 10,
+              }}
+            >
+              <Text
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  paddingBottom: 10,
+                  fontSize: 16,
+                  fontWeight: "bold",
                 }}
               >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Achived: {monthlyTarget.monthlyGoalReached}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Target: {monthlyTarget.monthlyGoal}
-                </Text>
-              </View>
+                Achived: {dailyTarget.dailyGoalReached}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                Target: {dailyTarget.dailyGoal}
+              </Text>
             </View>
+          </View>
+
+          <View
+            style={{
+              padding: 10,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#0da5eb",
+              backgroundColor: "#fff",
+              marginBottom: 20,
+            }}
+          >
+            <Text>Monthly Target</Text>
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 10,
+              }}
+            >
+              <AnimatedCircularProgress
+                size={120}
+                width={15}
+                fill={
+                  (monthlyTarget.monthlyGoalReached * 100) /
+                  monthlyTarget.monthlyGoal
+                }
+                tintColor="#0da5eb"
+                onAnimationComplete={() => console.log("onAnimationComplete")}
+                backgroundColor="#3d5875"
+              />
+            </View>
+            <Text
+              style={{
+                fontSize: 25,
+                textAlign: "center",
+              }}
+            >
+              {(
+                (monthlyTarget.monthlyGoalReached * 100) /
+                monthlyTarget.monthlyGoal
+              ).toFixed(2)}
+              %
+            </Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingBottom: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                Achived: {monthlyTarget.monthlyGoalReached}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                Target: {monthlyTarget.monthlyGoal}
+              </Text>
+            </View>
+          </View>
         </ScrollView>
       </View>
     </ImageBackground>

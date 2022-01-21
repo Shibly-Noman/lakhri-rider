@@ -1,22 +1,22 @@
+import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
 import {
-  View,
-  Text,
   Image,
   ImageBackground,
+  RefreshControl,
   ScrollView,
   StyleSheet,
-  RefreshControl
+  Text,
+  View,
 } from "react-native";
-import axios from "axios";
 import OrderCard from "../components/OrderCard";
-import {useAuth} from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
 function RiderHome() {
   const [orders, setOrders] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const {user, requestHeader} = useAuth();
+  const { user, requestHeader } = useAuth();
 
   // Prior check for security
   React.useEffect(async () => {
@@ -34,6 +34,7 @@ function RiderHome() {
       `https://peaceful-citadel-48843.herokuapp.com/order/rider/all/${user.id}`,
       requestHeader
     );
+    console.log(data);
     setOrders(data);
   };
 
@@ -68,7 +69,7 @@ function RiderHome() {
             color: "white",
           }}
         >
-          Welcome Mr. Nafis
+          Welcome {user.name}
         </Text>
         <Text
           style={{
@@ -98,7 +99,7 @@ function RiderHome() {
             <View
               style={{
                 alignItems: "center",
-                marginTop: "45%"
+                marginTop: "45%",
               }}
             >
               <Image
