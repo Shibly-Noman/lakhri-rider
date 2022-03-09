@@ -18,6 +18,8 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
 import { Picker } from "@react-native-picker/picker";
+import AntdIcon from "react-native-vector-icons/AntDesign";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import axios from "axios";
 
 export default function RiderRegister({ navigation }) {
@@ -35,6 +37,9 @@ export default function RiderRegister({ navigation }) {
   const [bLicenceImage, setBLicenceImage] = useState(null);
   const [vehicleType, setVehicleType] = useState(null);
   const [submitButtonText, setSubmitButtonText] = useState("SUBMIT");
+
+  const [hidePass, setHidePass] = useState(true);
+  const [hidePassRepeat, setHidePassRepeat] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -93,37 +98,45 @@ export default function RiderRegister({ navigation }) {
     }
 
     
-    setSubmitButtonText("Uploading Files...");
+    
 
-    const payload = {
-      ...data,
-      vehicleType,
-      imgURL: userImage ? await postImageToCloud(userImage) : null,
-      drivingLicenceImgURL: dLicenceImage ?  await postImageToCloud(dLicenceImage) : null,
-      carPaper: bLicenceImage ? await postImageToCloud(bLicenceImage) : null,
-      nidImgURL: nidImage ? await postImageToCloud(nidImage) : null,
-    };
+    if(data.password === data.rePassword){
+      setSubmitButtonText("Uploading Files...");
 
-    console.log(payload);
-
-    const res = await axios.post(
-      "https://peaceful-citadel-48843.herokuapp.com/auth/rider/signup",
-      payload
-    );
-    setSubmitButtonText("Submit");
-    reset();
-    setUserImage(null);
-    setBLicenceImage(null)
-    setDLicenceImage(null)
-    setNidImage(null)
-
-    if (res.data.errors) {
-      ToastAndroid.show("Registration Failed!", ToastAndroid.SHORT);
-      
+      const payload = {
+        ...data,
+        vehicleType,
+        imgURL: userImage ? await postImageToCloud(userImage) : null,
+        drivingLicenceImgURL: dLicenceImage ?  await postImageToCloud(dLicenceImage) : null,
+        carPaper: bLicenceImage ? await postImageToCloud(bLicenceImage) : null,
+        nidImgURL: nidImage ? await postImageToCloud(nidImage) : null,
+      };
+  
+      console.log(payload);
+  
+      const res = await axios.post(
+        "https://peaceful-citadel-48843.herokuapp.com/auth/rider/signup",
+        payload
+      );
+      setSubmitButtonText("Submit");
+      reset();
+      setUserImage(null);
+      setBLicenceImage(null)
+      setDLicenceImage(null)
+      setNidImage(null)
+  
+      if (res.data.errors) {
+        ToastAndroid.show("Registration Failed!", ToastAndroid.SHORT);
+        
+      } else {
+        ToastAndroid.show("Registration Successful!", ToastAndroid.SHORT);
+        navigation.navigate("RiderLogin");
+      }
     } else {
-      ToastAndroid.show("Registration Successful!", ToastAndroid.SHORT);
-      navigation.navigate("RiderLogin");
+      ToastAndroid.show("Password does not match!", ToastAndroid.SHORT);
     }
+
+    
   };
   return (
     <ImageBackground
@@ -136,6 +149,12 @@ export default function RiderRegister({ navigation }) {
           Welcome! We'd like to know about you
         </Text>
       </View>
+
+      <View style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
       <TouchableOpacity
         onPress={async () => setUserImage(await pickImage())}
         style={{
@@ -165,6 +184,19 @@ export default function RiderRegister({ navigation }) {
           />
         )}
       </TouchableOpacity>
+
+      <View style={{
+        paddingLeft: 10,
+      }}>
+          <Text style={styles.picTitle}>
+            Upload Your
+          </Text>
+          <Text style={styles.picTitle}>
+            Profile Picture
+          </Text>
+      </View>
+
+      </View>
 
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -256,6 +288,36 @@ export default function RiderRegister({ navigation }) {
             </Text>
           )}
 
+<Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputLable}>NID Number</Text>
+                <TextInput
+                  // keyboardType="numeric"
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              </View>
+            )}
+            name="nidNumber"
+            defaultValue=""
+          />
+          {errors.nidNumber && (
+            <Text
+              style={{
+                color: "#F00",
+              }}
+            >
+              NID Number is required.
+            </Text>
+          )}
+
           <Controller
             control={control}
             rules={{
@@ -265,13 +327,47 @@ export default function RiderRegister({ navigation }) {
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.inputWrapper}>
                 <Text style={styles.inputLable}>Password</Text>
+                <View style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}>
                 <TextInput
-                  style={styles.input}
+                  style={styles.inputPassGrid}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  secureTextEntry={true}
+                  secureTextEntry={hidePass}
                 />
+
+                   <TouchableOpacity
+                     onPress={() => setHidePass(!hidePass)}
+                        style={{
+                          height: 48,
+                          paddingHorizontal: 10,
+                          marginLeft: 10,
+                          borderWidth: 1,
+                          backgroundColor: "#fff",
+                          borderColor: "#05abf7",
+                          borderRadius: 6,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          shadowColor: "#000",
+                          shadowOffset: {
+                            width: 0,
+                            height: 3,
+                          },
+                          shadowOpacity: 0.27,
+                          shadowRadius: 4.65,
+                          elevation: 3,
+
+                        }}
+                      >
+                        <FeatherIcon name={hidePass ? "eye" : "eye-off"} size={24} color="#179bd7" />
+                        
+                      </TouchableOpacity>
+
+                    </View>
               </View>
             )}
             name="password"
@@ -286,6 +382,72 @@ export default function RiderRegister({ navigation }) {
               Password is required.
             </Text>
           )}
+
+<Controller
+            control={control}
+            rules={{
+              maxLength: 100,
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputLable}>Re-Type Password</Text>
+                <View style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}>
+                <TextInput
+                  style={styles.inputPassGrid}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry={hidePassRepeat}
+                />
+
+                   <TouchableOpacity
+                     onPress={() => setHidePassRepeat(!hidePassRepeat)}
+                        style={{
+                          height: 48,
+                          paddingHorizontal: 10,
+                          marginLeft: 10,
+                          borderWidth: 1,
+                          backgroundColor: "#fff",
+                          borderColor: "#05abf7",
+                          borderRadius: 6,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          shadowColor: "#000",
+                          shadowOffset: {
+                            width: 0,
+                            height: 3,
+                          },
+                          shadowOpacity: 0.27,
+                          shadowRadius: 4.65,
+                          elevation: 3,
+
+                        }}
+                      >
+                        <FeatherIcon name={hidePassRepeat ? "eye" : "eye-off"} size={24} color="#179bd7" />
+                        
+                      </TouchableOpacity>
+
+                    </View>
+              </View>
+            )}
+            name="rePassword"
+            defaultValue=""
+          />
+          {errors.rePassword && (
+            <Text
+              style={{
+                color: "#F00",
+              }}
+            >
+              Please Confirm Password
+            </Text>
+          )}
+
           <Controller
             control={control}
             rules={{
@@ -581,6 +743,21 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: "#fff",
   },
+  inputPassGrid: {
+    width: "80%",
+    borderWidth: 1,
+    borderColor: "#05abf7",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 6,
+    backgroundColor: "#fff",
+  },
+  picTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    // marginBottom: 10,
+    color: "#D3d3d3",
+  },  
   primaryTitle: {
     fontSize: 22,
     fontWeight: "600",
